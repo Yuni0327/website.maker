@@ -1,6 +1,37 @@
 const URL = "https://teachablemachine.withgoogle.com/models/mrrlxN-j5/";
 let model, maxPredictions;
 
+const animalDetails = {
+  '강아지': {
+    emoji: '🐶',
+    description: '다정다감하고 사교적인 성격을 가진 당신은 주변 사람들에게 에너지를 주는 매력적인 사람입니다. 충성심이 강하며 밝은 미소가 사람들을 편안하게 해줍니다.'
+  },
+  '고양이': {
+    emoji: '🐱',
+    description: '도도하고 신비로운 분위기를 가진 당신은 처음엔 차가워 보일 수 있지만, 알면 알수록 깊은 매력을 가진 사람입니다. 깔끔하고 독립적인 성향이 돋보입니다.'
+  },
+  '여우': {
+    emoji: '🦊',
+    description: '지적이고 눈치가 빠른 당신은 상황 판단력이 뛰어나며 매혹적인 분위기를 풍깁니다. 영리하고 세련된 매력으로 사람들의 시선을 사로잡는 능력이 있습니다.'
+  },
+  '토끼': {
+    emoji: '🐰',
+    description: '귀엽고 사랑스러운 외모와 발랄한 에너지를 가진 당신은 존재만으로도 주변을 환하게 밝힙니다. 호기심이 많고 다정하여 누구에게나 사랑받는 타입입니다.'
+  },
+  '햄스터': {
+    emoji: '🐹',
+    description: '작고 소중한 느낌의 당신은 보호 본능을 자극하는 귀여운 매력을 가졌습니다. 부지런하고 활동적이며, 소소한 행복을 소중히 여길 줄 아는 따뜻한 마음을 가졌습니다.'
+  },
+  '사슴': {
+    emoji: '🦌',
+    description: '맑고 깊은 눈망울을 가진 당신은 우아하고 고결한 분위기를 풍깁니다. 평화로운 성격과 섬세한 감수성을 가지고 있어 주변 사람들에게 힐링을 주는 존재입니다.'
+  },
+  '곰': {
+    emoji: '🐻',
+    description: '든든하고 포근한 인상을 주는 당신은 믿음직스럽고 온화한 성격을 가졌습니다. 우직하게 자신의 자리를 지키며 타인을 배려하는 넓은 마음씨가 당신의 가장 큰 매력입니다.'
+  }
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   const fileUpload = document.getElementById('file-upload');
   const startCameraBtn = document.getElementById('start-camera');
@@ -133,10 +164,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   function displayResults(results) {
     resultChart.innerHTML = '';
     
-    // 가장 높은 확률의 동물 강조
-    const topAnimal = results[0].name;
+    // 가장 높은 확률의 동물 정보 가져오기
+    const topResult = results[0];
+    const detail = animalDetails[topResult.name] || { emoji: '❓', description: '알 수 없는 동물상입니다.' };
+    
     const titleElement = resultSection.querySelector('h2');
-    titleElement.textContent = `당신은 '${topAnimal}상'입니다!`;
+    titleElement.innerHTML = `
+      <div class="top-emoji">${detail.emoji}</div>
+      <div>당신은 '${topResult.name}상'입니다!</div>
+    `;
+
+    // 설명 추가
+    const descriptionBox = document.createElement('p');
+    descriptionBox.className = 'animal-description';
+    descriptionBox.textContent = detail.description;
+    resultChart.appendChild(descriptionBox);
 
     results.forEach(res => {
       const item = document.createElement('div');

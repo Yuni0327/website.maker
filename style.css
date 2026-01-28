@@ -138,6 +138,27 @@ header p {
 .result-section h2 {
   text-align: center;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-emoji {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.animal-description {
+  background: #f1f5f9;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 2rem;
+  border-left: 5px solid var(--primary-color);
+  text-align: left;
+  line-height: 1.8;
 }
 
 .chart-container {
