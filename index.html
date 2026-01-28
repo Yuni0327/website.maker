@@ -50,6 +50,26 @@
         <div class="spinner"></div>
         <p>분석 중입니다...</p>
       </div>
+
+      <section class="contact-section">
+        <h2>문의하기</h2>
+        <p class="contact-desc">제휴 문의나 서비스에 대한 의견을 보내주세요.</p>
+        <!-- 
+             TODO: Formspree에서 폼을 생성하고 아래 action URL을 교체하세요.
+             예: action="https://formspree.io/f/xxyyzzww"
+        -->
+        <form action="https://formspree.io/f/mlgbklda" method="POST">
+          <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" placeholder="답변 받을 이메일 주소" required>
+          </div>
+          <div class="form-group">
+            <label for="message">내용</label>
+            <textarea id="message" name="message" placeholder="문의 내용을 자유롭게 적어주세요" required></textarea>
+          </div>
+          <button type="submit" class="btn primary full-width">보내기</button>
+        </form>
+      </section>
     </main>
 
     <footer>
