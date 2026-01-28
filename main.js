@@ -1,6 +1,7 @@
-const animals = ['강아지', '고양이', '여우', '토끼', '햄스터', '사슴', '곰'];
+const URL = "https://teachablemachine.withgoogle.com/models/mrrlxN-j5/";
+let model, maxPredictions;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const fileUpload = document.getElementById('file-upload');
   const startCameraBtn = document.getElementById('start-camera');
   const capturePhotoBtn = document.getElementById('capture-photo');
@@ -15,6 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let stream = null;
 
+  // Teachable Machine 모델 로드
+  async function loadModel() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+    console.log("Model loaded successfully");
+  }
+
+  // 초기 모델 로드 시작
+  loadModel().catch(err => console.error("Failed to load model:", err));
+
   // 파일 업로드 처리
   fileUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -23,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.onload = (event) => {
         showPreview(event.target.result);
         stopCamera();
-        runAnalysis();
+        runAnalysis(imagePreview);
       };
       reader.readAsDataURL(file);
     }
@@ -56,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     stopCamera();
     capturePhotoBtn.classList.add('hidden');
     startCameraBtn.classList.remove('hidden');
-    runAnalysis();
+    
+    // 캡처된 이미지가 담긴 imagePreview 엘리먼트로 분석
+    setTimeout(() => runAnalysis(imagePreview), 100);
   });
 
   // 다시하기
@@ -83,34 +98,36 @@ document.addEventListener('DOMContentLoaded', () => {
     webcamVideo.classList.add('hidden');
   }
 
-  async function runAnalysis() {
+  async function runAnalysis(imageElement) {
+    if (!model) {
+      alert("모델이 아직 로드되지 않았습니다. 잠시만 기다려 주세요.");
+      return;
+    }
+
     loading.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // 인공지능 분석 시뮬레이션 (1.5초 대기)
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Teachable Machine 모델로 예측 실행
+      const prediction = await model.predict(imageElement);
+      
+      // 결과 가공 및 정렬 (확률 높은 순)
+      const results = prediction
+        .map(p => ({
+          name: p.className,
+          probability: p.probability * 100
+        }))
+        .sort((a, b) => b.probability - a.probability);
 
-    const results = generateMockResults();
-    displayResults(results);
-
-    loading.classList.add('hidden');
-    resultSection.classList.remove('hidden');
-    resultSection.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function generateMockResults() {
-    // 랜덤 결과 생성 (실제 모델이 있다면 여기서 API 호출)
-    let total = 0;
-    const scores = animals.map(() => {
-      const score = Math.random() * 100;
-      total += score;
-      return score;
-    });
-
-    return animals.map((animal, i) => ({
-      name: animal,
-      probability: (scores[i] / total) * 100
-    })).sort((a, b) => b.probability - a.probability);
+      displayResults(results);
+    } catch (err) {
+      console.error("Prediction error:", err);
+      alert("분석 중 오류가 발생했습니다.");
+    } finally {
+      loading.classList.add('hidden');
+      resultSection.classList.remove('hidden');
+      resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   function displayResults(results) {

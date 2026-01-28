@@ -13,12 +13,13 @@
 - HTML5 (Web Components 사용 고려)
 - CSS3 (Modern Baseline features: Variables, Flexbox, Grid)
 - JavaScript (ES Modules, MediaDevices API)
+- **TensorFlow.js & Teachable Machine Image Library**
 
 ## Implementation Plan
-1. **index.html:** 기본 구조 및 업로드/카메라 버튼, 결과 영역 레이아웃 작성.
-2. **style.css:** 현대적이고 깔끔한 디자인 적용 (Glassmorphism, Soft Shadows 등).
+1. **index.html:** Teachable Machine 및 TensorFlow.js 라이브러리 추가.
+2. **style.css:** 기존 디자인 유지.
 3. **main.js:**
-    - 파일 선택 및 웹캠 스트림 처리.
-    - 사진 캡처 및 미리보기 기능.
-    - 분류 결과 시뮬레이션 로직 (실제 모델 API 연결 준비).
-4. **Verification:** 브라우저 미리보기를 통한 UI 및 기능 확인.
+    - Teachable Machine 모델 로드 (`https://teachablemachine.withgoogle.com/models/mrrlxN-j5/`).
+    - `runAnalysis` 함수를 수정하여 실제 모델의 `predict` 결과를 사용하도록 변경.
+    - 파일 업로드 및 카메라 촬영 이미지 모두 모델에 전달하여 분석.
+4. **Verification:** 브라우저 미리보기를 통한 실제 모델 작동 확인.
