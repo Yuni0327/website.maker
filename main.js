@@ -331,3 +331,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+// Triggering Cloudflare rebuild - 2026-01-29
