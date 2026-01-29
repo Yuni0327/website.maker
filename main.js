@@ -55,8 +55,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   const shareCard = document.getElementById('share-card');
   const resultImageContainer = document.getElementById('result-image-container');
   const celebritySection = document.getElementById('celebrity-section');
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
 
   let stream = null;
+
+  // 다크 모드 초기 설정
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    updateThemeIcon(true);
+  } else if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // 시스템 설정이 다크 모드이고 사용자가 설정한 값이 없을 때
+    body.classList.add('dark-mode');
+    updateThemeIcon(true);
+  }
+
+  // 다크 모드 토글
+  themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDarkMode = body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    updateThemeIcon(isDarkMode);
+  });
+
+  function updateThemeIcon(isDarkMode) {
+    if (isDarkMode) {
+      // Sun Icon
+      themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+    } else {
+      // Moon Icon
+      themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+    }
+  }
 
   // Teachable Machine 모델 로드
   async function loadModel() {
@@ -131,10 +162,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!shareCard) return;
     
     try {
+      // 다크 모드 여부 확인
+      const isDarkMode = body.classList.contains('dark-mode');
+      const backgroundColor = isDarkMode ? '#1e293b' : '#ffffff';
+
       // 캡처 전 스타일 조정 (필요 시)
       const canvas = await html2canvas(shareCard, {
         scale: 2, // 고해상도 캡처
-        backgroundColor: '#ffffff',
+        backgroundColor: backgroundColor,
         useCORS: true // 크로스 오리진 이미지 허용
       });
       

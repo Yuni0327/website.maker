@@ -7,6 +7,23 @@
   --text-muted: #64748b;
   --radius: 1rem;
   --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --input-bg: #f8fafc;
+  --input-border: #cbd5e1;
+  --desc-bg: #f1f5f9;
+  --chip-bg: #e0e7ff;
+  --chip-text: #6366f1;
+}
+
+body.dark-mode {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --input-bg: #334155;
+  --input-border: #475569;
+  --desc-bg: #334155;
+  --chip-bg: #312e81;
+  --chip-text: #c7d2fe;
 }
 
 * {
@@ -20,6 +37,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
@@ -31,6 +49,29 @@ body {
 header {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text-main);
+  transition: transform 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 header h1 {
@@ -51,13 +92,14 @@ header p {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   text-align: center;
+  transition: background-color 0.3s;
 }
 
 .preview-container {
   width: 100%;
   aspect-ratio: 4/3;
-  background: #f1f5f9;
-  border: 2px dashed #cbd5e1;
+  background: var(--desc-bg);
+  border: 2px dashed var(--input-border);
   border-radius: var(--radius);
   margin-bottom: 1.5rem;
   overflow: hidden;
@@ -128,10 +170,10 @@ header p {
 /* Result Section */
 .result-section {
   margin-top: 2rem;
-  background: transparent; /* Changed to transparent as .share-card has background */
-  padding: 0; /* Remove padding here, move to .share-card */
+  background: transparent;
+  padding: 0;
   border-radius: var(--radius);
-  box-shadow: none; /* Remove shadow here, move to .share-card */
+  box-shadow: none;
   animation: fadeIn 0.5s ease;
 }
 
@@ -141,6 +183,7 @@ header p {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin-bottom: 1rem;
+  transition: background-color 0.3s;
 }
 
 .share-card h2 {
@@ -174,7 +217,7 @@ header p {
 }
 
 .animal-description {
-  background: #f1f5f9;
+  background: var(--desc-bg);
   padding: 1.5rem;
   border-radius: 0.75rem;
   font-size: 1rem;
@@ -183,6 +226,7 @@ header p {
   border-left: 5px solid var(--primary-color);
   text-align: left;
   line-height: 1.8;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* Celebrity Section */
@@ -205,12 +249,13 @@ header p {
 }
 
 .celeb-chip {
-  background: #e0e7ff;
-  color: var(--primary-color);
+  background: var(--chip-bg);
+  color: var(--chip-text);
   padding: 0.5rem 1rem;
   border-radius: 2rem;
   font-size: 0.9rem;
   font-weight: 600;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .chart-container {
@@ -235,7 +280,7 @@ header p {
 .progress-bar-bg {
   width: 100%;
   height: 12px;
-  background: #e2e8f0;
+  background: var(--desc-bg);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -260,6 +305,7 @@ header p {
   padding: 2rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  transition: background-color 0.3s;
 }
 
 .contact-section h2 {
@@ -290,11 +336,12 @@ header p {
 .form-group textarea {
   width: 100%;
   padding: 0.875rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--input-border);
   border-radius: 0.5rem;
   font-family: inherit;
   font-size: 1rem;
-  background-color: #f8fafc;
+  background-color: var(--input-bg);
+  color: var(--text-main);
   transition: all 0.2s ease;
 }
 
@@ -302,7 +349,6 @@ header p {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  background-color: #fff;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
@@ -323,18 +369,19 @@ header p {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background works for both modes */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 100;
+  color: #fff;
 }
 
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #e2e8f0;
+  border: 5px solid rgba(255, 255, 255, 0.3);
   border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
