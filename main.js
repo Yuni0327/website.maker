@@ -4,31 +4,38 @@ let model, maxPredictions;
 const animalDetails = {
   '강아지': {
     emoji: '🐶',
-    description: '다정다감하고 사교적인 성격을 가진 당신은 주변 사람들에게 에너지를 주는 매력적인 사람입니다. 충성심이 강하며 밝은 미소가 사람들을 편안하게 해줍니다.'
+    description: '다정다감하고 사교적인 성격을 가진 당신은 주변 사람들에게 에너지를 주는 매력적인 사람입니다. 충성심이 강하며 밝은 미소가 사람들을 편안하게 해줍니다.',
+    celebrities: ['송중기', '박보영', '강다니엘', '백현', '아이유']
   },
   '고양이': {
     emoji: '🐱',
-    description: '도도하고 신비로운 분위기를 가진 당신은 처음엔 차가워 보일 수 있지만, 알면 알수록 깊은 매력을 가진 사람입니다. 깔끔하고 독립적인 성향이 돋보입니다.'
+    description: '도도하고 신비로운 분위기를 가진 당신은 처음엔 차가워 보일 수 있지만, 알면 알수록 깊은 매력을 가진 사람입니다. 깔끔하고 독립적인 성향이 돋보입니다.',
+    celebrities: ['제니', '강동원', '한예슬', '시우민', '안소희']
   },
   '여우': {
     emoji: '🦊',
-    description: '지적이고 눈치가 빠른 당신은 상황 판단력이 뛰어나며 매혹적인 분위기를 풍깁니다. 영리하고 세련된 매력으로 사람들의 시선을 사로잡는 능력이 있습니다.'
+    description: '지적이고 눈치가 빠른 당신은 상황 판단력이 뛰어나며 매혹적인 분위기를 풍깁니다. 영리하고 세련된 매력으로 사람들의 시선을 사로잡는 능력이 있습니다.',
+    celebrities: ['황민현', '예지', '지코', '아이엔', '선미']
   },
   '토끼': {
     emoji: '🐰',
-    description: '귀엽고 사랑스러운 외모와 발랄한 에너지를 가진 당신은 존재만으로도 주변을 환하게 밝힙니다. 호기심이 많고 다정하여 누구에게나 사랑받는 타입입니다.'
+    description: '귀엽고 사랑스러운 외모와 발랄한 에너지를 가진 당신은 존재만으로도 주변을 환하게 밝힙니다. 호기심이 많고 다정하여 누구에게나 사랑받는 타입입니다.',
+    celebrities: ['나연', '정국', '수지', '도영', '장원영']
   },
   '햄스터': {
     emoji: '🐹',
-    description: '작고 소중한 느낌의 당신은 보호 본능을 자극하는 귀여운 매력을 가졌습니다. 부지런하고 활동적이며, 소소한 행복을 소중히 여길 줄 아는 따뜻한 마음을 가졌습니다.'
+    description: '작고 소중한 느낌의 당신은 보호 본능을 자극하는 귀여운 매력을 가졌습니다. 부지런하고 활동적이며, 소소한 행복을 소중히 여길 줄 아는 따뜻한 마음을 가졌습니다.',
+    celebrities: ['호시', '츄', '문별', '진', '승연']
   },
   '사슴': {
     emoji: '🦌',
-    description: '맑고 깊은 눈망울을 가진 당신은 우아하고 고결한 분위기를 풍깁니다. 평화로운 성격과 섬세한 감수성을 가지고 있어 주변 사람들에게 힐링을 주는 존재입니다.'
+    description: '맑고 깊은 눈망울을 가진 당신은 우아하고 고결한 분위기를 풍깁니다. 평화로운 성격과 섬세한 감수성을 가지고 있어 주변 사람들에게 힐링을 주는 존재입니다.',
+    celebrities: ['윤아', '차은우', '김진우', '미주', '최강창민']
   },
   '곰': {
     emoji: '🐻',
-    description: '든든하고 포근한 인상을 주는 당신은 믿음직스럽고 온화한 성격을 가졌습니다. 우직하게 자신의 자리를 지키며 타인을 배려하는 넓은 마음씨가 당신의 가장 큰 매력입니다.'
+    description: '든든하고 포근한 인상을 주는 당신은 믿음직스럽고 온화한 성격을 가졌습니다. 우직하게 자신의 자리를 지키며 타인을 배려하는 넓은 마음씨가 당신의 가장 큰 매력입니다.',
+    celebrities: ['마동석', '조진웅', '셔누', '김태우', '안재홍']
   }
 };
 
@@ -44,6 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loading = document.getElementById('loading');
   const restartBtn = document.getElementById('restart-btn');
   const captureCanvas = document.getElementById('capture-canvas');
+  const saveBtn = document.getElementById('save-btn');
+  const shareCard = document.getElementById('share-card');
+  const resultImageContainer = document.getElementById('result-image-container');
+  const celebritySection = document.getElementById('celebrity-section');
 
   let stream = null;
 
@@ -112,6 +123,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     imagePreview.classList.add('hidden');
     placeholder.classList.remove('hidden');
     fileUpload.value = '';
+    resultImageContainer.innerHTML = ''; // 이미지 컨테이너 초기화
+  });
+
+  // 결과 이미지 저장
+  saveBtn.addEventListener('click', async () => {
+    if (!shareCard) return;
+    
+    try {
+      // 캡처 전 스타일 조정 (필요 시)
+      const canvas = await html2canvas(shareCard, {
+        scale: 2, // 고해상도 캡처
+        backgroundColor: '#ffffff',
+        useCORS: true // 크로스 오리진 이미지 허용
+      });
+      
+      const link = document.createElement('a');
+      link.download = 'animal-face-result.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (err) {
+      console.error('이미지 저장 실패:', err);
+      alert('이미지를 저장하는 중 오류가 발생했습니다.');
+    }
   });
 
   function showPreview(src) {
@@ -150,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }))
         .sort((a, b) => b.probability - a.probability);
 
-      displayResults(results);
+      displayResults(results, imageElement.src);
     } catch (err) {
       console.error("Prediction error:", err);
       alert("분석 중 오류가 발생했습니다.");
@@ -161,14 +195,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  function displayResults(results) {
+  function displayResults(results, imageSrc) {
     resultChart.innerHTML = '';
+    celebritySection.innerHTML = '';
+    resultImageContainer.innerHTML = '';
+
+    // 1. 사용자 이미지 복제하여 결과 카드에 추가
+    const clonedImage = document.createElement('img');
+    clonedImage.src = imageSrc;
+    clonedImage.className = 'result-user-image';
+    resultImageContainer.appendChild(clonedImage);
     
     // 가장 높은 확률의 동물 정보 가져오기
     const topResult = results[0];
-    const detail = animalDetails[topResult.name] || { emoji: '❓', description: '알 수 없는 동물상입니다.' };
+    const detail = animalDetails[topResult.name] || { emoji: '❓', description: '알 수 없는 동물상입니다.', celebrities: [] };
     
-    const titleElement = resultSection.querySelector('h2');
+    const titleElement = shareCard.querySelector('h2');
     titleElement.innerHTML = `
       <div class="top-emoji">${detail.emoji}</div>
       <div>당신은 '${topResult.name}상'입니다!</div>
@@ -179,6 +221,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     descriptionBox.className = 'animal-description';
     descriptionBox.textContent = detail.description;
     resultChart.appendChild(descriptionBox);
+
+    // 연예인 정보 추가
+    if (detail.celebrities && detail.celebrities.length > 0) {
+      const celebTitle = document.createElement('h3');
+      celebTitle.textContent = `${topResult.name}상 연예인`;
+      celebTitle.className = 'celeb-title';
+      celebritySection.appendChild(celebTitle);
+
+      const celebList = document.createElement('div');
+      celebList.className = 'celeb-list';
+      
+      detail.celebrities.forEach(celeb => {
+        const chip = document.createElement('span');
+        chip.className = 'celeb-chip';
+        chip.textContent = celeb;
+        celebList.appendChild(chip);
+      });
+      celebritySection.appendChild(celebList);
+    }
 
     results.forEach(res => {
       const item = document.createElement('div');

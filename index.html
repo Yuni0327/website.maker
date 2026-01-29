@@ -39,11 +39,20 @@
       </section>
 
       <section id="result-section" class="result-section hidden">
-        <h2>분류 결과</h2>
-        <div id="result-chart" class="chart-container">
-          <!-- JS로 동적 생성됨 -->
+        <div id="share-card" class="share-card">
+          <h2>분류 결과</h2>
+          <div id="result-image-container" class="result-image-container"></div>
+          <div id="result-chart" class="chart-container">
+            <!-- JS로 동적 생성됨 -->
+          </div>
+          <div id="celebrity-section" class="celebrity-section">
+            <!-- JS로 동적 생성됨 -->
+          </div>
         </div>
-        <button id="restart-btn" class="btn outline">다시하기</button>
+        <div class="result-actions">
+          <button id="save-btn" class="btn primary">결과 이미지 저장</button>
+          <button id="restart-btn" class="btn outline">다시하기</button>
+        </div>
       </section>
 
       <div id="loading" class="loading hidden">
@@ -79,6 +88,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script defer type="module" src="/main.js"></script>
 </body>
 </html>
