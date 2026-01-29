@@ -101,10 +101,47 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 초기 모델 로드 시작
   loadModel().catch(err => console.error("Failed to load model:", err));
 
-  // 파일 업로드 처리
-  fileUpload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  // 드래그 앤 드롭 처리
+  const uploadSection = document.querySelector('.upload-section');
+  
+  // 기본 드래그 동작 방지 및 스타일 적용
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    uploadSection.classList.add('highlight');
+  }
+
+  function unhighlight(e) {
+    uploadSection.classList.remove('highlight');
+  }
+
+  // 파일 드롭 처리
+  uploadSection.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+  }
+
+  function handleFiles(files) {
+    const file = files[0];
+    if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (event) => {
         showPreview(event.target.result);
@@ -112,7 +149,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         runAnalysis(imagePreview);
       };
       reader.readAsDataURL(file);
+    } else if (file) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
     }
+  }
+
+  // 파일 업로드 버튼 처리 (기존 로직 수정)
+  fileUpload.addEventListener('change', (e) => {
+    handleFiles(e.target.files);
   });
 
   // 카메라 시작

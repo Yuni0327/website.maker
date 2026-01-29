@@ -92,7 +92,14 @@ header p {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   text-align: center;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+  border: 2px solid transparent;
+}
+
+.upload-section.highlight {
+  border-color: var(--primary-color);
+  background-color: var(--desc-bg);
+  transform: scale(1.02);
 }
 
 .preview-container {
@@ -107,6 +114,7 @@ header p {
   align-items: center;
   justify-content: center;
   position: relative;
+  pointer-events: none; /* Let the section handle drag events */
 }
 
 .preview-container img,
