@@ -434,12 +434,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function submitReply(pid, container) {
-    const nick = container.querySelector('.reply-nickname').value.trim();
-    const pw = container.querySelector('.reply-password').value.trim();
-    const msg = container.querySelector('.reply-input').value.trim();
+    const nickInput = container.querySelector('.reply-nickname');
+    const pwInput = container.querySelector('.reply-password');
+    const msgInput = container.querySelector('.reply-input');
+    const nick = nickInput.value.trim();
+    const pw = pwInput.value.trim();
+    const msg = msgInput.value.trim();
     if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
-    if (db) await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, parentId: pid, timestamp: serverTimestamp() });
-    alert(translations[currentLang].alertReplySuccess);
+    if (db) {
+      await addDoc(collection(db, "guestbook"), { 
+        nickname: nick, 
+        password: pw, 
+        message: msg, 
+        animal: animalTypeHidden.value, 
+        parentId: pid, 
+        timestamp: serverTimestamp() 
+      });
+      msgInput.value = '';
+      pwInput.value = '';
+      container.querySelector('.reply-form').classList.add('hidden');
+      alert(translations[currentLang].alertReplySuccess);
+    }
   }
 
   if (addCommentBtn) {

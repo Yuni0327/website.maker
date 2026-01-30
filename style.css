@@ -486,25 +486,86 @@ header p {
   transform: rotate(90deg);
 }
 
+.reply-form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--input-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.reply-form input,
+.reply-form textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background: var(--input-bg);
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+
+.reply-form textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
 .replies-container {
-  margin-left: 1.2rem;
+  margin-left: 1.5rem;
   border-left: 2px solid var(--input-border);
   padding-left: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  margin-top: 0.4rem;
-  margin-bottom: 0.8rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .reply-item {
-  background: var(--desc-bg);
-  padding: 0.8rem 1rem;
+  background: var(--card-bg);
+  padding: 1rem;
   border-radius: 0.8rem;
+  border: 1px solid var(--input-border);
   font-size: 0.9rem;
-  border: 1px solid rgba(0,0,0,0.03);
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   animation: slideIn 0.3s ease-out;
+  position: relative;
+}
+
+.reply-item::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 1.2rem;
+  width: 0.8rem;
+  height: 2px;
+  background: var(--input-border);
+}
+
+.comment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.comment-author {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.comment-text {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .comment-footer {
@@ -525,6 +586,23 @@ header p {
   font-size: 0.85rem;
   color: var(--text-muted);
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.like-btn.active {
+  border-color: #ef4444;
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.like-btn.small {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+}
+
+.comment-delete-btn.small {
+  width: 22px;
+  height: 22px;
+  font-size: 0.9rem;
 }
 
 /* Guide Section */
