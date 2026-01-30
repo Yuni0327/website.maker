@@ -274,8 +274,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('comment-input').placeholder = translations[lang]['inputPlaceholder'];
 
       // 3. Dropdown Update
-      const animalOptions = document.getElementById('animal-type-select').options;
-      animalOptions[0].text = `강아지 🐶`; // 이건 이모지라 굳이 번역 안해도 되지만, 원하신다면 'Puppy 🐶' 식으로 가능
+      const animalTypeSelect = document.getElementById('animal-type-select');
+      const animalOptions = animalTypeSelect.options;
+      
+      // animalDetails 정보를 활용해 드롭다운 텍스트 업데이트
+      animalOptions[0].text = `${animalDetails['강아지'].name[lang]} 🐶`;
+      animalOptions[1].text = `${animalDetails['고양이'].name[lang]} 🐱`;
+      animalOptions[2].text = `${animalDetails['여우'].name[lang]} 🦊`;
+      animalOptions[3].text = `${animalDetails['토끼'].name[lang]} 🐰`;
+      animalOptions[4].text = `${animalDetails['사슴'].name[lang]} 🦌`;
       animalOptions[5].text = `${translations[lang]['bystander']} 👻`;
 
       // 4. Toggle Button Text
