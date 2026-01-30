@@ -1,6 +1,6 @@
 // Firebase 라이브러리 (CDN) - 모듈 방식
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, serverTimestamp, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ⚠️ 중요: 여기에 여러분의 Firebase 프로젝트 설정을 붙여넣으세요!
 // Firebase 콘솔 -> 프로젝트 설정 -> 일반 -> '내 앱' -> 'SDK 설정 및 구성' -> 'Config' 복사
@@ -670,6 +670,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       mainComments.forEach((data) => {
         const docId = data.id;
         const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : '';
+        const likes = data.likes || 0;
+        const isLiked = localStorage.getItem(`liked_${docId}`) === 'true';
         
         const commentItem = document.createElement('div');
         commentItem.className = 'comment-item-container';
@@ -686,6 +688,12 @@ document.addEventListener('DOMContentLoaded', async () => {
               </div>
             </div>
             <p class="comment-text">${data.message}</p>
+            <div class="comment-footer">
+              <button class="like-btn ${isLiked ? 'active' : ''}" data-id="${docId}">
+                <span class="heart-icon">${isLiked ? '❤️' : '🤍'}</span>
+                <span class="like-count">${likes}</span>
+              </button>
+            </div>
             <div class="reply-form hidden" id="reply-form-${docId}">
               <div class="input-row">
                 <input type="text" placeholder="닉네임" class="reply-nickname" maxlength="10">
@@ -698,12 +706,18 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="replies-container" id="replies-${docId}"></div>
         `;
 
+        // 좋아요 이벤트 (메인 댓글)
+        commentItem.querySelector('.like-btn').addEventListener('click', (e) => handleLike(docId, e.currentTarget));
+
         // 해당 댓글의 답글들 필터링하여 추가
         const currentReplies = replies.filter(r => r.parentId === docId).sort((a,b) => a.timestamp - b.timestamp);
         const repliesContainer = commentItem.querySelector('.replies-container');
         
         currentReplies.forEach(reply => {
           const rDate = reply.timestamp ? new Date(reply.timestamp.toDate()).toLocaleDateString() : '';
+          const rLikes = reply.likes || 0;
+          const rIsLiked = localStorage.getItem(`liked_${reply.id}`) === 'true';
+
           const replyEl = document.createElement('div');
           replyEl.className = 'reply-item';
           replyEl.innerHTML = `
@@ -715,7 +729,16 @@ document.addEventListener('DOMContentLoaded', async () => {
               <button class="comment-delete-btn small" data-id="${reply.id}">×</button>
             </div>
             <p class="comment-text">${reply.message}</p>
+            <div class="comment-footer">
+              <button class="like-btn small ${rIsLiked ? 'active' : ''}" data-id="${reply.id}">
+                <span class="heart-icon">${rIsLiked ? '❤️' : '🤍'}</span>
+                <span class="like-count">${rLikes}</span>
+              </button>
+            </div>
           `;
+          
+          // 좋아요 이벤트 (답글)
+          replyEl.querySelector('.like-btn').addEventListener('click', (e) => handleLike(reply.id, e.currentTarget));
           
           // 답글 삭제 이벤트
           replyEl.querySelector('.comment-delete-btn').addEventListener('click', () => deleteComment(reply.id, reply.password));
@@ -761,6 +784,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         commentList.appendChild(commentItem);
       });
     });
+  }
+
+  async function handleLike(docId, btnElement) {
+    const isLiked = localStorage.getItem(`liked_${docId}`) === 'true';
+    
+    // 이미 눌렀다면 취소는 일단 막거나, 원하신다면 -1 로직을 넣을 수 있습니다.
+    // 여기서는 간단하게 한 번만 누를 수 있게 구현합니다.
+    if (isLiked) {
+        alert("이미 공감하셨습니다! ❤️");
+        return;
+    }
+
+    try {
+      // UI 즉시 반영 (낙관적 업데이트)
+      const countEl = btnElement.querySelector('.like-count');
+      const heartEl = btnElement.querySelector('.heart-icon');
+      countEl.textContent = parseInt(countEl.textContent) + 1;
+      heartEl.textContent = '❤️';
+      btnElement.classList.add('active');
+      localStorage.setItem(`liked_${docId}`, 'true');
+
+      // Firestore 업데이트
+      const docRef = doc(db, "guestbook", docId);
+      await updateDoc(docRef, {
+        likes: increment(1)
+      });
+    } catch (e) {
+      console.error("Like update failed:", e);
+    }
   }
 
   async function deleteComment(docId, correctPassword) {

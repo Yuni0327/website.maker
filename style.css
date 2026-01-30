@@ -544,9 +544,50 @@ header p {
   transition: border-color 0.2s;
 }
 
-.reply-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
+.comment-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.like-btn {
+  background: none;
+  border: 1px solid var(--input-border);
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.like-btn:hover {
+  background: var(--desc-bg);
+  transform: scale(1.05);
+}
+
+.like-btn.active {
+  border-color: #ff4757;
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.05);
+}
+
+.like-btn.active .heart-icon {
+  animation: heartPop 0.4s ease;
+}
+
+.like-btn.small {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.75rem;
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
 }
 
 .hidden {
