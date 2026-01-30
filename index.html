@@ -126,8 +126,15 @@
       <section class="guide-section">
         <h2 data-i18n="guideTitle">동물상별 상세 가이드</h2>
         <p class="contact-desc" data-i18n="guideSubtitle">나의 동물상에 대해 더 자세히 알아보세요!</p>
-        <div id="guide-grid" class="guide-grid">
-          <!-- JS로 동적 생성됨 -->
+        <div class="guide-stack-wrapper">
+          <div id="guide-stack" class="guide-stack">
+            <!-- JS로 동적 생성됨 -->
+          </div>
+          <div class="stack-controls">
+            <button id="prev-guide" class="stack-btn" aria-label="Previous">❮</button>
+            <div id="stack-dots" class="stack-dots"></div>
+            <button id="next-guide" class="stack-btn" aria-label="Next">❯</button>
+          </div>
         </div>
       </section>
 

@@ -305,54 +305,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
   });
 
-  function updateLanguage(lang) {
-      // 1. Static Text Update
-      document.querySelectorAll('[data-i18n]').forEach(element => {
-          const key = element.getAttribute('data-i18n');
-          if (translations[lang][key]) {
-              element.textContent = translations[lang][key];
-          }
-      });
-      
-      // 2. Placeholder & Input Update
-      document.getElementById('email').placeholder = translations[lang]['emailPlaceholder'];
-      document.getElementById('message').placeholder = translations[lang]['messagePlaceholder'];
-      document.getElementById('nickname').placeholder = translations[lang]['nickname'];
-      document.getElementById('password').placeholder = translations[lang]['password'];
-      document.getElementById('comment-input').placeholder = translations[lang]['inputPlaceholder'];
-
-      // 3. Dropdown Update
-      const animalTypeSelect = document.getElementById('animal-type-select');
-      const animalOptions = animalTypeSelect.options;
-      
-      // animalDetails 정보를 활용해 드롭다운 텍스트 업데이트
-      animalOptions[0].text = `${animalDetails['강아지'].name[lang]} 🐶`;
-      animalOptions[1].text = `${animalDetails['고양이'].name[lang]} 🐱`;
-      animalOptions[2].text = `${animalDetails['여우'].name[lang]} 🦊`;
-      animalOptions[3].text = `${animalDetails['토끼'].name[lang]} 🐰`;
-      animalOptions[4].text = `${animalDetails['사슴'].name[lang]} 🦌`;
-      animalOptions[5].text = `${translations[lang]['bystander']} 👻`;
-
-      // 4. 가이드 섹션 업데이트
-      renderAnimalGuide(lang);
-
-      // 5. Toggle Button Text
-      langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
-      
-      // 6. HTML lang attribute
-      document.documentElement.lang = lang;
-  }
+  let currentGuideIndex = 0;
+  const animalKeys = Object.keys(animalDetails);
 
   function renderAnimalGuide(lang) {
-      const guideGrid = document.getElementById('guide-grid');
-      if (!guideGrid) return;
+      const guideStack = document.getElementById('guide-stack');
+      const stackDots = document.getElementById('stack-dots');
+      if (!guideStack || !stackDots) return;
       
-      guideGrid.innerHTML = '';
+      guideStack.innerHTML = '';
+      stackDots.innerHTML = '';
       
-      Object.keys(animalDetails).forEach(key => {
+      animalKeys.forEach((key, index) => {
           const detail = animalDetails[key];
+          
+          // 카드 생성
           const card = document.createElement('div');
-          card.className = 'guide-card';
+          card.className = `guide-card`;
+          card.dataset.index = index;
           card.innerHTML = `
             <div class="guide-card-header">
                 <span class="guide-emoji">${detail.emoji}</span>
@@ -369,9 +339,71 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </div>
           `;
-          guideGrid.appendChild(card);
+          
+          // 클릭 시 다음 카드로
+          card.addEventListener('click', () => {
+              if (index === currentGuideIndex) nextGuide();
+          });
+          
+          guideStack.appendChild(card);
+          
+          // 도트 생성
+          const dot = document.createElement('div');
+          dot.className = `dot ${index === currentGuideIndex ? 'active' : ''}`;
+          stackDots.appendChild(dot);
+      });
+      
+      updateStackUI();
+  }
+
+  function updateStackUI() {
+      const cards = document.querySelectorAll('.guide-card');
+      const dots = document.querySelectorAll('.dot');
+      const total = animalKeys.length;
+
+      cards.forEach((card, i) => {
+          const index = parseInt(card.dataset.index);
+          // 현재 인덱스로부터의 상대적 위치 계산 (순환형)
+          let relativeIndex = (index - currentGuideIndex + total) % total;
+          
+          card.classList.remove('stack-1', 'stack-2', 'stack-3', 'stack-hidden', 'pass-back');
+          
+          if (relativeIndex === 0) {
+              card.classList.add('stack-1');
+          } else if (relativeIndex === 1) {
+              card.classList.add('stack-2');
+          } else if (relativeIndex === 2) {
+              card.classList.add('stack-3');
+          } else {
+              card.classList.add('stack-hidden');
+          }
+      });
+
+      dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentGuideIndex);
       });
   }
+
+  function nextGuide() {
+      const currentCard = document.querySelector(`.guide-card[data-index="${currentGuideIndex}"]`);
+      currentCard.classList.add('pass-back');
+      
+      setTimeout(() => {
+          currentGuideIndex = (currentGuideIndex + 1) % animalKeys.length;
+          updateStackUI();
+      }, 450); // 애니메이션 시간(500ms)보다 약간 짧게
+  }
+
+  function prevGuide() {
+      currentGuideIndex = (currentGuideIndex - 1 + animalKeys.length) % animalKeys.length;
+      updateStackUI();
+  }
+
+  // 가이드 컨트롤 이벤트 리스너 (한 번만 등록되도록 renderAnimalGuide 외부 혹은 초기화 시점에 배치)
+  document.getElementById('next-guide')?.addEventListener('click', nextGuide);
+  document.getElementById('prev-guide')?.addEventListener('click', prevGuide);
+
+  function updateLanguage(lang) {
 
   // 다크 모드 초기 설정
   const currentTheme = localStorage.getItem('theme');
