@@ -1,6 +1,6 @@
 // Firebase 라이브러리 (CDN) - 모듈 방식
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ⚠️ 중요: 여기에 여러분의 Firebase 프로젝트 설정을 붙여넣으세요!
 // Firebase 콘솔 -> 프로젝트 설정 -> 일반 -> '내 앱' -> 'SDK 설정 및 구성' -> 'Config' 복사
@@ -523,6 +523,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 분석 완료되면 해당 동물 이모지로 선택값 변경
     if (detail.emoji) {
         animalTypeSelect.value = detail.emoji;
+        // 커뮤니티 섹션으로 이동할 때 바로 글을 쓰고 싶게끔 유도
     }
     
     const titleElement = shareCard.querySelector('h2');
@@ -651,7 +652,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   
   // --- Community Logic (Firestore) ---
-  
+  const passwordInput = document.getElementById('password');
+
   // 1. 실시간 댓글 읽기 (Listener)
   if (db) {
       // 쿼리: timestamp 기준 내림차순(최신순), 최대 50개
@@ -661,8 +663,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     onSnapshot(q, (snapshot) => {
       commentList.innerHTML = ''; // 기존 목록 지우고 새로 그리기
       
-      snapshot.forEach((doc) => {
-        const data = doc.data();
+      snapshot.forEach((snapshotDoc) => {
+        const data = snapshotDoc.data();
+        const docId = snapshotDoc.id;
         // 날짜 변환 (Firestore Timestamp -> Date)
         const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : '';
         
@@ -670,11 +673,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         commentItem.className = 'comment-item';
         commentItem.innerHTML = `
           <div class="comment-header">
-            <span class="comment-author">${data.animal} ${data.nickname}</span>
-            <span class="comment-date">${date}</span>
+            <div class="comment-info">
+              <span class="comment-author">${data.animal} ${data.nickname}</span>
+              <span class="comment-date">${date}</span>
+            </div>
+            <button class="comment-delete-btn" data-id="${docId}" aria-label="삭제">×</button>
           </div>
           <p class="comment-text">${data.message}</p>
         `;
+
+        // 삭제 버튼 이벤트 리스너 추가
+        const deleteBtn = commentItem.querySelector('.comment-delete-btn');
+        deleteBtn.addEventListener('click', async () => {
+          const inputPassword = prompt("비밀번호를 입력하세요:");
+          if (!inputPassword) return;
+
+          if (inputPassword === data.password) {
+            if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+              try {
+                await deleteDoc(doc(db, "guestbook", docId));
+                alert("댓글이 삭제되었습니다.");
+              } catch (e) {
+                console.error("Error deleting document: ", e);
+                alert("삭제 중 오류가 발생했습니다.");
+              }
+            }
+          } else {
+            alert("비밀번호가 일치하지 않습니다.");
+          }
+        });
+
         commentList.appendChild(commentItem);
       });
     });
@@ -692,9 +720,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nickname = nicknameInput.value.trim();
     const message = commentInput.value.trim();
     const animal = animalTypeSelect.value;
+    const password = passwordInput.value.trim();
 
-    if (!nickname || !message) {
-      alert("닉네임과 내용을 모두 입력해주세요.");
+    if (!nickname || !message || !password) {
+      alert("닉네임, 내용, 비밀번호를 모두 입력해주세요.");
       return;
     }
 
@@ -704,11 +733,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         nickname: nickname,
         message: message,
         animal: animal,
+        password: password, // 비밀번호 저장
         timestamp: serverTimestamp() // 서버 시간 자동 기록
       });
       
       // 입력창 초기화
       commentInput.value = '';
+      passwordInput.value = ''; // 비밀번호 창도 비움
       // 닉네임은 보통 유지하고 싶어 하므로 놔둠
       alert("글이 등록되었습니다! 🎉");
     } catch (e) {
