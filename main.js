@@ -5,12 +5,13 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, se
 // ⚠️ 중요: 여기에 여러분의 Firebase 프로젝트 설정을 붙여넣으세요!
 // Firebase 콘솔 -> 프로젝트 설정 -> 일반 -> '내 앱' -> 'SDK 설정 및 구성' -> 'Config' 복사
 const firebaseConfig = {
-  apiKey: "API_KEY_를_여기에_넣으세요",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyC3JZSxZUq_iCZgMCf0XnFSVjonZqQogMo",
+  authDomain: "animal-face-chat-9bce8.firebaseapp.com",
+  projectId: "animal-face-chat-9bce8",
+  storageBucket: "animal-face-chat-9bce8.firebasestorage.app",
+  messagingSenderId: "797389459508",
+  appId: "1:797389459508:web:8e327983193570de837a61",
+  measurementId: "G-M8Z43V517V"
 };
 
 // Firebase 초기화 (설정이 올바르지 않으면 오류가 나므로 try-catch 감쌈)
