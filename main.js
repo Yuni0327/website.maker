@@ -36,6 +36,11 @@ const translations = {
     postBtn: "글 남기기",
     inputPlaceholder: "나의 동물상은? 자유롭게 이야기를 남겨보세요!",
     nickname: "닉네임",
+    password: "비밀번호",
+    reply: "답글",
+    replyBtn: "답글 등록",
+    replyPlaceholder: "답글을 남겨주세요",
+    bystander: "구경꾼",
     title: "나의 동물상 찾기",
     subtitle: "인공지능이 분석하는 나의 동물상 테스트",
     uploadText: "사진을 업로드하거나 촬영하세요",
@@ -61,14 +66,27 @@ const translations = {
     alertError: "분석 중 오류가 발생했습니다.",
     alertImgOnly: "이미지 파일만 업로드할 수 있습니다.",
     alertCamera: "카메라를 시작할 수 없습니다: ",
-    alertSaveError: "이미지를 저장하는 중 오류가 발생했습니다."
+    alertSaveError: "이미지를 저장하는 중 오류가 발생했습니다.",
+    alertInputAll: "모든 항목을 입력해주세요.",
+    alertPostSuccess: "글이 등록되었습니다! 🎉",
+    alertReplySuccess: "답글이 등록되었습니다.",
+    alertDeleteSuccess: "삭제되었습니다.",
+    alertDeleteConfirm: "정말로 삭제하시겠습니까?",
+    alertWrongPassword: "비밀번호가 일치하지 않습니다.",
+    alertAlreadyLiked: "이미 공감하셨습니다! ❤️",
+    promptPassword: "비밀번호를 입력하세요:"
   },
   en: {
     communityTitle: "Animal Farm Chat",
     communityDesc: "Show off your result and chat with others! (Anonymous)",
-    postBtn: "Post Comment",
+    postBtn: "Post",
     inputPlaceholder: "Share your animal type result!",
     nickname: "Nickname",
+    password: "Pass",
+    reply: "Reply",
+    replyBtn: "Post Reply",
+    replyPlaceholder: "Write a reply...",
+    bystander: "Bystander",
     title: "Animal Face Test",
     subtitle: "AI-powered animal face type analysis",
     uploadText: "Upload or take a photo",
@@ -86,7 +104,7 @@ const translations = {
     sendBtn: "Send",
     emailPlaceholder: "Your email address",
     messagePlaceholder: "Write your message here",
-    chartLabels: ['Cuteness', 'Chic', 'Purity', 'Glamour', 'Friendliness'],
+    chartLabels: ['Cute', 'Chic', 'Pure', 'Glam', 'Friendly'],
     celebTitle: " face celebrities",
     resultComment: "You look like a {name}!",
     unknown: "Unknown animal type.",
@@ -94,7 +112,15 @@ const translations = {
     alertError: "An error occurred during analysis.",
     alertImgOnly: "Only image files are allowed.",
     alertCamera: "Cannot start camera: ",
-    alertSaveError: "An error occurred while saving the image."
+    alertSaveError: "An error occurred while saving the image.",
+    alertInputAll: "Please fill in all fields.",
+    alertPostSuccess: "Posted successfully! 🎉",
+    alertReplySuccess: "Reply posted.",
+    alertDeleteSuccess: "Deleted successfully.",
+    alertDeleteConfirm: "Are you sure you want to delete this?",
+    alertWrongPassword: "Incorrect password.",
+    alertAlreadyLiked: "You already liked this! ❤️",
+    promptPassword: "Enter your password:"
   }
 };
 
@@ -240,16 +266,22 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
       });
       
-      // 2. Placeholder Update
+      // 2. Placeholder & Input Update
       document.getElementById('email').placeholder = translations[lang]['emailPlaceholder'];
       document.getElementById('message').placeholder = translations[lang]['messagePlaceholder'];
       document.getElementById('nickname').placeholder = translations[lang]['nickname'];
+      document.getElementById('password').placeholder = translations[lang]['password'];
       document.getElementById('comment-input').placeholder = translations[lang]['inputPlaceholder'];
 
-      // 3. Toggle Button Text
+      // 3. Dropdown Update
+      const animalOptions = document.getElementById('animal-type-select').options;
+      animalOptions[0].text = `강아지 🐶`; // 이건 이모지라 굳이 번역 안해도 되지만, 원하신다면 'Puppy 🐶' 식으로 가능
+      animalOptions[5].text = `${translations[lang]['bystander']} 👻`;
+
+      // 4. Toggle Button Text
       langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
       
-      // 4. HTML lang attribute
+      // 5. HTML lang attribute
       document.documentElement.lang = lang;
   }
 
@@ -683,7 +715,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span class="comment-date">${date}</span>
               </div>
               <div class="comment-actions">
-                <button class="reply-toggle-btn" data-id="${docId}">답글</button>
+                <button class="reply-toggle-btn" data-id="${docId}">${translations[currentLang].reply}</button>
                 <button class="comment-delete-btn" data-id="${docId}">×</button>
               </div>
             </div>
@@ -696,11 +728,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div class="reply-form hidden" id="reply-form-${docId}">
               <div class="input-row">
-                <input type="text" placeholder="닉네임" class="reply-nickname" maxlength="10">
-                <input type="password" placeholder="비번" class="reply-password" maxlength="4">
+                <input type="text" placeholder="${translations[currentLang].nickname}" class="reply-nickname" maxlength="10">
+                <input type="password" placeholder="${translations[currentLang].password}" class="reply-password" maxlength="4">
               </div>
-              <textarea placeholder="답글을 남겨주세요" class="reply-input" maxlength="100"></textarea>
-              <button class="btn primary full-width reply-submit-btn" data-id="${docId}">답글 등록</button>
+              <textarea placeholder="${translations[currentLang].replyPlaceholder}" class="reply-input" maxlength="100"></textarea>
+              <button class="btn primary full-width reply-submit-btn" data-id="${docId}">${translations[currentLang].replyBtn}</button>
             </div>
           </div>
           <div class="replies-container" id="replies-${docId}"></div>
