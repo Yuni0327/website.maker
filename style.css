@@ -343,10 +343,124 @@ header p {
   justify-content: center;
 }
 
-/* Contact Section */
-.contact-section {
+/* Community Section */
+.community-section {
   margin-top: 2rem;
   background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: background-color 0.3s;
+}
+
+.community-section h2 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.community-form {
+  margin-bottom: 2rem;
+  background: var(--desc-bg);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+#nickname {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+  color: var(--text-main);
+}
+
+#animal-type-select {
+  padding: 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+#comment-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Scrollbar styling */
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+.comment-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.comment-list::-webkit-scrollbar-thumb {
+  background-color: var(--input-border);
+  border-radius: 3px;
+}
+
+.comment-item {
+  background: var(--desc-bg);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.comment-author {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.comment-text {
+  color: var(--text-main);
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* Skeleton Loading for comments */
+.skeleton {
+  opacity: 0.7;
+}
+.skeleton-text {
+  background-color: var(--input-border);
+  height: 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+.skeleton-text.short { width: 30%; display: inline-block; }
+.skeleton-text.long { width: 100%; height: 3rem; }
+
   padding: 2rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);

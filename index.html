@@ -90,6 +90,38 @@
         <p data-i18n="analyzing">분석 중입니다...</p>
       </div>
 
+      <section class="community-section">
+        <h2 data-i18n="communityTitle">동물농장 수다방</h2>
+        <p class="contact-desc" data-i18n="communityDesc">결과를 자랑하고 다른 사람들과 이야기해보세요! (익명)</p>
+        
+        <div class="community-form">
+          <div class="input-row">
+            <input type="text" id="nickname" placeholder="닉네임" maxlength="10">
+            <select id="animal-type-select">
+              <option value="🐶">강아지 🐶</option>
+              <option value="🐱">고양이 🐱</option>
+              <option value="🦊">여우 🦊</option>
+              <option value="🐰">토끼 🐰</option>
+              <option value="🦌">사슴 🦌</option>
+              <option value="👻">구경꾼 👻</option>
+            </select>
+          </div>
+          <textarea id="comment-input" placeholder="나의 동물상은? 자유롭게 이야기를 남겨보세요!" maxlength="100"></textarea>
+          <button id="add-comment-btn" class="btn primary full-width" data-i18n="postBtn">글 남기기</button>
+        </div>
+
+        <div id="comment-list" class="comment-list">
+          <!-- 댓글이 실시간으로 여기에 달립니다 -->
+          <div class="comment-item skeleton">
+            <div class="comment-header">
+              <span class="skeleton-text short"></span>
+              <span class="skeleton-text short"></span>
+            </div>
+            <div class="skeleton-text long"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="contact-section">
         <h2 data-i18n="contactTitle">문의하기</h2>
         <p class="contact-desc" data-i18n="contactDesc">제휴 문의나 서비스에 대한 의견을 보내주세요.</p>
