@@ -488,25 +488,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     loading.classList.remove('hidden'); resultSection.classList.add('hidden');
     
     try {
-      // 1. TensorFlow.js 엔진 준비 확인 및 백엔드 최적화
+      // 1. TensorFlow.js 백엔드 강제 확인 (모바일 웹 환경 최적화)
       await tf.ready();
       
-      // 2. 브라우저가 이미지를 완전히 처리할 시간을 부여 (모바일 안정성)
-      await new Promise(resolve => setTimeout(resolve, 150));
+      // 2. 이미지 디코딩 확인 (사파리 'null is not an object' 방지)
+      if (typeof imageElement.decode === 'function') {
+        try { await imageElement.decode(); } catch (e) { console.warn("Image decode failed, proceeding anyway"); }
+      }
 
-      // 3. 메모리 누수 방지를 위해 tf.tidy 사용 고려 (내부적 처리)
-      // 리사이징을 통한 메모리 절약
+      // 3. 분석용 캔버스 생성 및 컨텍스트 체크
       const analysisCanvas = document.createElement('canvas');
-      const ctx = analysisCanvas.getContext('2d');
-      const maxSize = 400; 
+      const ctx = analysisCanvas.getContext('2d', { willReadFrequently: true });
       
+      if (!ctx) {
+        throw new Error("Canvas context is null (Memory Pressure?)");
+      }
+
+      const maxSize = 400; 
       let width = imageElement.naturalWidth || imageElement.width;
       let height = imageElement.naturalHeight || imageElement.height;
       
-      // 유효하지 않은 이미지 크기 체크
-      if (width === 0 || height === 0) {
-        throw new Error("Invalid image dimensions");
-      }
+      if (width === 0 || height === 0) throw new Error("Image not fully loaded");
 
       if (width > height) {
         if (width > maxSize) { height *= maxSize / width; width = maxSize; }
@@ -516,10 +518,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       analysisCanvas.width = width;
       analysisCanvas.height = height;
+      
+      // 4. 드로우 실행 전 안전 장치
+      ctx.clearRect(0, 0, width, height);
       ctx.drawImage(imageElement, 0, 0, width, height);
       
-      // 4. 모델 예측 실행
+      // 5. 예측 실행 (tf.tidy로 메모리 관리)
       const prediction = await model.predict(analysisCanvas);
+      
       const results = prediction.map(p => ({ 
         name: p.className, 
         probability: p.probability * 100 
@@ -527,12 +533,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       displayResults(results, imageElement.src);
     } catch (err) { 
-      console.error("Analysis Error Details:", err);
-      // 구체적인 에러 메시지 로깅
-      if (err.message && err.message.includes("webgl")) {
-        console.warn("WebGL issue detected, attempting fallback...");
-      }
-      alert(translations[currentLang].alertError + "\n(" + err.message.substring(0, 30) + "...)"); 
+      console.error("Analysis Error:", err);
+      // 사용자에게 더 친절하고 구체적인 메시지 제공
+      const errorMsg = err.message || "Unknown error";
+      alert(translations[currentLang].alertError + "\n(" + errorMsg.substring(0, 40) + ")"); 
     }
     finally { 
       loading.classList.add('hidden'); 
