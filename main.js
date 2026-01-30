@@ -656,58 +656,129 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 1. 실시간 댓글 읽기 (Listener)
   if (db) {
-      // 쿼리: timestamp 기준 내림차순(최신순), 최대 50개
-    const q = query(collection(db, "guestbook"), orderBy("timestamp", "desc"), limit(50));
+    const q = query(collection(db, "guestbook"), orderBy("timestamp", "desc"), limit(100));
     
-    // onSnapshot: 데이터가 바뀔 때마다(누가 글을 쓰면) 자동으로 실행됨
     onSnapshot(q, (snapshot) => {
-      commentList.innerHTML = ''; // 기존 목록 지우고 새로 그리기
-      
-      snapshot.forEach((snapshotDoc) => {
-        const data = snapshotDoc.data();
-        const docId = snapshotDoc.id;
-        // 날짜 변환 (Firestore Timestamp -> Date)
+      commentList.innerHTML = '';
+      const allDocs = [];
+      snapshot.forEach(doc => allDocs.push({ id: doc.id, ...doc.data() }));
+
+      // 원문 댓글과 답글 분리
+      const mainComments = allDocs.filter(d => !d.parentId);
+      const replies = allDocs.filter(d => d.parentId);
+
+      mainComments.forEach((data) => {
+        const docId = data.id;
         const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : '';
         
         const commentItem = document.createElement('div');
-        commentItem.className = 'comment-item';
+        commentItem.className = 'comment-item-container';
         commentItem.innerHTML = `
-          <div class="comment-header">
-            <div class="comment-info">
-              <span class="comment-author">${data.animal} ${data.nickname}</span>
-              <span class="comment-date">${date}</span>
+          <div class="comment-item" id="comment-${docId}">
+            <div class="comment-header">
+              <div class="comment-info">
+                <span class="comment-author">${data.animal} ${data.nickname}</span>
+                <span class="comment-date">${date}</span>
+              </div>
+              <div class="comment-actions">
+                <button class="reply-toggle-btn" data-id="${docId}">답글</button>
+                <button class="comment-delete-btn" data-id="${docId}">×</button>
+              </div>
             </div>
-            <button class="comment-delete-btn" data-id="${docId}" aria-label="삭제">×</button>
+            <p class="comment-text">${data.message}</p>
+            <div class="reply-form hidden" id="reply-form-${docId}">
+              <div class="input-row">
+                <input type="text" placeholder="닉네임" class="reply-nickname" maxlength="10">
+                <input type="password" placeholder="비번" class="reply-password" maxlength="4">
+              </div>
+              <textarea placeholder="답글을 남겨주세요" class="reply-input" maxlength="100"></textarea>
+              <button class="btn primary full-width reply-submit-btn" data-id="${docId}">답글 등록</button>
+            </div>
           </div>
-          <p class="comment-text">${data.message}</p>
+          <div class="replies-container" id="replies-${docId}"></div>
         `;
 
-        // 삭제 버튼 이벤트 리스너 추가
-        const deleteBtn = commentItem.querySelector('.comment-delete-btn');
-        deleteBtn.addEventListener('click', async () => {
-          const inputPassword = prompt("비밀번호를 입력하세요:");
-          if (!inputPassword) return;
+        // 해당 댓글의 답글들 필터링하여 추가
+        const currentReplies = replies.filter(r => r.parentId === docId).sort((a,b) => a.timestamp - b.timestamp);
+        const repliesContainer = commentItem.querySelector('.replies-container');
+        
+        currentReplies.forEach(reply => {
+          const rDate = reply.timestamp ? new Date(reply.timestamp.toDate()).toLocaleDateString() : '';
+          const replyEl = document.createElement('div');
+          replyEl.className = 'reply-item';
+          replyEl.innerHTML = `
+            <div class="comment-header">
+              <div class="comment-info">
+                <span class="comment-author">↳ ${reply.animal} ${reply.nickname}</span>
+                <span class="comment-date">${rDate}</span>
+              </div>
+              <button class="comment-delete-btn small" data-id="${reply.id}">×</button>
+            </div>
+            <p class="comment-text">${reply.message}</p>
+          `;
+          
+          // 답글 삭제 이벤트
+          replyEl.querySelector('.comment-delete-btn').addEventListener('click', () => deleteComment(reply.id, reply.password));
+          repliesContainer.appendChild(replyEl);
+        });
 
-          if (inputPassword === data.password) {
-            if (confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
-              try {
-                await deleteDoc(doc(db, "guestbook", docId));
-                alert("댓글이 삭제되었습니다.");
-              } catch (e) {
-                console.error("Error deleting document: ", e);
-                alert("삭제 중 오류가 발생했습니다.");
-              }
-            }
-          } else {
-            alert("비밀번호가 일치하지 않습니다.");
+        // 답글 창 토글
+        commentItem.querySelector('.reply-toggle-btn').addEventListener('click', () => {
+          const form = document.getElementById(`reply-form-${docId}`);
+          form.classList.toggle('hidden');
+        });
+
+        // 답글 등록 이벤트
+        commentItem.querySelector('.reply-submit-btn').addEventListener('click', async (e) => {
+          const pid = e.target.dataset.id;
+          const rNickname = commentItem.querySelector('.reply-nickname').value.trim();
+          const rPassword = commentItem.querySelector('.reply-password').value.trim();
+          const rMessage = commentItem.querySelector('.reply-input').value.trim();
+          
+          if (!rNickname || !rMessage || !rPassword) {
+            alert("모든 항목을 입력해주세요.");
+            return;
+          }
+
+          try {
+            await addDoc(collection(db, "guestbook"), {
+              nickname: rNickname,
+              message: rMessage,
+              animal: animalTypeSelect.value, // 현재 선택된 동물 혹은 기본값
+              password: rPassword,
+              parentId: pid,
+              timestamp: serverTimestamp()
+            });
+            alert("답글이 등록되었습니다.");
+          } catch (err) {
+            console.error(err);
           }
         });
+
+        // 원문 삭제 이벤트
+        commentItem.querySelector('.comment-delete-btn').addEventListener('click', () => deleteComment(docId, data.password));
 
         commentList.appendChild(commentItem);
       });
     });
-  } else {
-      commentList.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 1rem;">DB 연결 후 이용 가능합니다.</p>';
+  }
+
+  async function deleteComment(docId, correctPassword) {
+    const inputPassword = prompt("비밀번호를 입력하세요:");
+    if (!inputPassword) return;
+
+    if (inputPassword === correctPassword) {
+      if (confirm("정말로 삭제하시겠습니까?")) {
+        try {
+          await deleteDoc(doc(db, "guestbook", docId));
+          alert("삭제되었습니다.");
+        } catch (e) {
+          alert("삭제 중 오류가 발생했습니다.");
+        }
+      }
+    } else {
+      alert("비밀번호가 일치하지 않습니다.");
+    }
   }
 
   // 2. 댓글 쓰기
