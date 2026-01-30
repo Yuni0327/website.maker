@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>개인정보 처리방침 - Animal Face AI</title>
+  <link href="/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .privacy-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .privacy-container h1 { margin-bottom: 2rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+    .privacy-container h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.3rem; }
+    .privacy-container p, .privacy-container li { color: var(--text-main); line-height: 1.8; margin-bottom: 1rem; }
+    .privacy-container ul { padding-left: 1.2rem; margin-bottom: 1.5rem; }
+    .privacy-container li { margin-bottom: 0.5rem; list-style-type: disc; }
+    .privacy-container li::marker { color: var(--primary-color); }
+    .back-link { display: inline-block; margin-bottom: 1rem; color: var(--primary-color); text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body class="privacy-page">
+  <div class="container">
+    <a href="/" class="back-link">← 홈으로 돌아가기</a>
+    <div class="privacy-container">
+      <h1>개인정보 처리방침</h1>
+      <p>본 서비스(이하 'Animal Face AI')는 이용자의 개인정보를 중요시하며, "정보통신망 이용촉진 및 정보보호"에 관한 법률을 준수하고 있습니다.</p>
+
+      <h2>1. 수집하는 개인정보 항목 및 방법</h2>
+      <p>Animal Face AI는 별도의 회원가입 없이 이용 가능하며, 서비스 이용 과정에서 다음과 같은 정보가 발생할 수 있습니다.</p>
+      <ul>
+        <li><strong>얼굴 사진 데이터:</strong> 인공지능 분석을 위해 사용자가 업로드하거나 촬영한 사진은 <strong>서버에 저장되지 않으며</strong>, 이용자의 웹 브라우저 내에서만 처리된 후 즉시 휘발됩니다.</li>
+        <li><strong>서비스 이용 기록:</strong> 방문 일시, 접속 로그, 쿠키, 접속 IP 정보 등</li>
+      </ul>
+
+      <h2>2. 개인정보의 수집 및 이용목적</h2>
+      <p>수집된 정보는 다음의 목적을 위해 활용됩니다.</p>
+      <ul>
+        <li>인공지능을 이용한 동물상 분석 결과 제공</li>
+        <li>구글 애드센스 광고 게재 및 최적화</li>
+        <li>서비스 이용 통계 분석 및 서비스 개선</li>
+      </ul>
+
+      <h2>3. 제3자 광고 및 쿠키 사용</h2>
+      <p>본 서비스는 구글(Google)에서 제공하는 광고 서비스인 구글 애드센스(Google AdSense)를 이용합니다. 구글은 이용자의 방문 기록을 바탕으로 맞춤형 광고를 제공하기 위해 쿠키(Cookie)를 사용할 수 있습니다.</p>
+      <p>이용자는 웹 브라우저 설정에서 쿠키 저장을 거부할 수 있습니다.</p>
+
+      <h2>4. 개인정보의 보유 및 파기</h2>
+      <p>Animal Face AI는 원칙적으로 사용자의 사진 데이터를 보유하지 않습니다. 모든 분석은 클라이언트 사이드(사용자 기기)에서 수행됩니다. 수다방에 작성된 게시물은 이용자가 직접 삭제하거나 서비스 종료 시까지 보관됩니다.</p>
+
+      <h2>5. 이용자의 권리</h2>
+      <p>이용자는 언제든지 자신의 게시물을 삭제할 수 있으며, 쿠키 설정 거부 등을 통해 개인정보 수집에 대한 권리를 행사할 수 있습니다.</p>
+
+      <p style="margin-top: 3rem; font-size: 0.9rem; color: var(--text-muted);">시행일자: 2026년 1월 30일</p>
+    </div>
+  </div>
+  <script>
+    // 테마 동기화
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+</body>
+</html>
