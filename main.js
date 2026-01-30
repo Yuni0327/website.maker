@@ -1,3 +1,28 @@
+// Firebase 라이브러리 (CDN) - 모듈 방식
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// ⚠️ 중요: 여기에 여러분의 Firebase 프로젝트 설정을 붙여넣으세요!
+// Firebase 콘솔 -> 프로젝트 설정 -> 일반 -> '내 앱' -> 'SDK 설정 및 구성' -> 'Config' 복사
+const firebaseConfig = {
+  apiKey: "API_KEY_를_여기에_넣으세요",
+  authDomain: "PROJECT_ID.firebaseapp.com",
+  projectId: "PROJECT_ID",
+  storageBucket: "PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+
+// Firebase 초기화 (설정이 올바르지 않으면 오류가 나므로 try-catch 감쌈)
+let db;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  console.log("Firebase initialized");
+} catch (e) {
+  console.log("Firebase config not set yet. Community features disabled.");
+}
+
 const URL = "https://teachablemachine.withgoogle.com/models/mrrlxN-j5/";
 let model, maxPredictions;
 let radarChart = null; // Chart.js 인스턴스 저장용
@@ -5,6 +30,11 @@ let radarChart = null; // Chart.js 인스턴스 저장용
 // Translation Data
 const translations = {
   ko: {
+    communityTitle: "동물농장 수다방",
+    communityDesc: "결과를 자랑하고 다른 사람들과 이야기해보세요! (익명)",
+    postBtn: "글 남기기",
+    inputPlaceholder: "나의 동물상은? 자유롭게 이야기를 남겨보세요!",
+    nickname: "닉네임",
     title: "나의 동물상 찾기",
     subtitle: "인공지능이 분석하는 나의 동물상 테스트",
     uploadText: "사진을 업로드하거나 촬영하세요",
@@ -33,6 +63,11 @@ const translations = {
     alertSaveError: "이미지를 저장하는 중 오류가 발생했습니다."
   },
   en: {
+    communityTitle: "Animal Farm Chat",
+    communityDesc: "Show off your result and chat with others! (Anonymous)",
+    postBtn: "Post Comment",
+    inputPlaceholder: "Share your animal type result!",
+    nickname: "Nickname",
     title: "Animal Face Test",
     subtitle: "AI-powered animal face type analysis",
     uploadText: "Upload or take a photo",
@@ -162,9 +197,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const langToggle = document.getElementById('lang-toggle');
   const body = document.body;
   const resultComment = document.getElementById('result-comment');
+  
+  // Community Elements
+  const commentInput = document.getElementById('comment-input');
+  const nicknameInput = document.getElementById('nickname');
+  const animalTypeSelect = document.getElementById('animal-type-select');
+  const addCommentBtn = document.getElementById('add-comment-btn');
+  const commentList = document.getElementById('comment-list');
 
   let stream = null;
-  
+
   // 언어 설정 초기화
   const savedLang = localStorage.getItem('lang');
   if (savedLang) {
@@ -184,10 +226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       // 결과 화면이 떠있다면 텍스트 업데이트를 위해 UI 갱신 (이미지 재분석 없이 텍스트만)
       if (!resultSection.classList.contains('hidden') && imagePreview.src) {
-           // 이미 분석된 결과가 있다면 다시 분석을 돌리는 것보다는, 
-           // 현재 구조상 runAnalysis를 호출하지 않고는 동적 텍스트를 바꾸기 어려우므로
-           // 간단히 새로고침을 유도하거나, 변수에 저장된 결과로 다시 그리는게 좋음.
-           // 여기서는 UX상 다시 분석하도록 트리거하는 것이 깔끔함 (이미지가 있으므로 빠름)
            runAnalysis(imagePreview);
       }
   });
@@ -204,6 +242,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 2. Placeholder Update
       document.getElementById('email').placeholder = translations[lang]['emailPlaceholder'];
       document.getElementById('message').placeholder = translations[lang]['messagePlaceholder'];
+      document.getElementById('nickname').placeholder = translations[lang]['nickname'];
+      document.getElementById('comment-input').placeholder = translations[lang]['inputPlaceholder'];
 
       // 3. Toggle Button Text
       langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
@@ -212,23 +252,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.documentElement.lang = lang;
   }
 
-  // ... (다크모드 및 기존 로직 유지) ...
-
   // 다크 모드 초기 설정
   const currentTheme = localStorage.getItem('theme');
   if (currentTheme === 'dark') {
     body.classList.add('dark-mode');
     updateThemeIcon(true);
   } else if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // 시스템 설정이 다크 모드이고 사용자가 설정한 값이 없을 때
     body.classList.add('dark-mode');
     updateThemeIcon(true);
   }
 
+  // 다크 모드 토글
   themeToggle.addEventListener('click', () => {
     body.classList.toggle('dark-mode');
     const isDarkMode = body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     updateThemeIcon(isDarkMode);
+    
+    // 차트 색상 업데이트를 위해 다시 그리기 (결과가 나와있는 상태라면)
     if (radarChart) {
         updateChartTheme(isDarkMode);
     }
@@ -236,8 +278,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function updateThemeIcon(isDarkMode) {
     if (isDarkMode) {
+      // Sun Icon
       themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
     } else {
+      // Moon Icon
       themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
     }
   }
@@ -263,11 +307,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("Model loaded successfully");
   }
 
+  // 초기 모델 로드 시작
   loadModel().catch(err => console.error("Failed to load model:", err));
 
-  // 드래그 앤 드롭 및 파일 처리 로직 (기존과 동일)
+  // 드래그 앤 드롭 처리
   const uploadSection = document.querySelector('.upload-section');
   
+  // 기본 드래그 동작 방지 및 스타일 적용
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     uploadSection.addEventListener(eventName, preventDefaults, false);
   });
@@ -293,6 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     uploadSection.classList.remove('highlight');
   }
 
+  // 파일 드롭 처리
   uploadSection.addEventListener('drop', handleDrop, false);
 
   function handleDrop(e) {
@@ -305,23 +352,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     const file = files[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
+      
       reader.onload = (event) => {
+        // 이미지가 실제로 로드된 후에 분석 실행
         imagePreview.onload = () => {
           runAnalysis(imagePreview);
         };
         showPreview(event.target.result);
         stopCamera();
       };
+      
       reader.readAsDataURL(file);
     } else if (file) {
       alert(translations[currentLang].alertImgOnly);
     }
   }
 
+  // 파일 업로드 버튼 처리 (기존 로직 수정)
   fileUpload.addEventListener('change', (e) => {
     handleFiles(e.target.files);
   });
 
+  // 카메라 시작
   startCameraBtn.addEventListener('click', async () => {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
@@ -336,6 +388,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  // 사진 캡처
   capturePhotoBtn.addEventListener('click', () => {
     const context = captureCanvas.getContext('2d');
     captureCanvas.width = webcamVideo.videoWidth;
@@ -344,6 +397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const imageData = captureCanvas.toDataURL('image/png');
     
+    // 이미지가 로드된 후 분석 실행
     imagePreview.onload = () => {
       runAnalysis(imagePreview);
     };
@@ -354,6 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     startCameraBtn.classList.remove('hidden');
   });
 
+  // 다시하기
   restartBtn.addEventListener('click', () => {
     resultSection.classList.add('hidden');
     imagePreview.src = '';
@@ -361,18 +416,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     placeholder.classList.remove('hidden');
     fileUpload.value = '';
     resultImageContainer.innerHTML = ''; 
+    // 차트는 displayResults에서 새로 생성할 때 기존 것을 파괴하므로 여기선 굳이 안 해도 됨.
   });
 
+  // 결과 이미지 저장
   saveBtn.addEventListener('click', async () => {
     if (!shareCard) return;
+    
     try {
+      // 다크 모드 여부 확인
       const isDarkMode = body.classList.contains('dark-mode');
       const backgroundColor = isDarkMode ? '#1e293b' : '#ffffff';
+
+      // 캡처 전 스타일 조정 (필요 시)
       const canvas = await html2canvas(shareCard, {
-        scale: 2,
+        scale: 2, // 고해상도 캡처
         backgroundColor: backgroundColor,
-        useCORS: true
+        useCORS: true // 크로스 오리진 이미지 허용
       });
+      
       const link = document.createElement('a');
       link.download = 'animal-face-result.png';
       link.href = canvas.toDataURL();
@@ -408,7 +470,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultSection.classList.add('hidden');
 
     try {
+      // Teachable Machine 모델로 예측 실행
       const prediction = await model.predict(imageElement);
+      
+      // 결과 가공 및 정렬 (확률 높은 순)
       const results = prediction
         .map(p => ({
           name: p.className,
@@ -433,11 +498,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultImageContainer.innerHTML = '';
     resultComment.textContent = '';
 
+    // 1. 사용자 이미지 복제하여 결과 카드에 추가
     const clonedImage = document.createElement('img');
     clonedImage.src = imageSrc;
     clonedImage.className = 'result-user-image';
     resultImageContainer.appendChild(clonedImage);
     
+    // 가장 높은 확률의 동물 정보 가져오기
     const topResult = results[0];
     const detail = animalDetails[topResult.name] || { 
       name: { ko: topResult.name, en: 'Unknown' },
@@ -452,16 +519,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     };
     
+    // 분석 완료되면 해당 동물 이모지로 선택값 변경
+    if (detail.emoji) {
+        animalTypeSelect.value = detail.emoji;
+    }
+    
+    const titleElement = shareCard.querySelector('h2');
+    
     // Dynamic Text based on Language
     const animalName = detail.name[currentLang] || topResult.name;
     const resultTitleText = translations[currentLang].resultComment.replace('{name}', animalName);
 
-    const titleElement = shareCard.querySelector('h2');
     titleElement.innerHTML = `
       <div class="top-emoji">${detail.emoji}</div>
       <div>${resultTitleText}</div>
     `;
 
+    // 설명 추가
+    const descriptionBox = document.createElement('p');
+    descriptionBox.className = 'animal-description';
+    descriptionBox.textContent = detail.description[currentLang];
+    resultChart.appendChild(descriptionBox);
+    
     // 한줄 평
     let comment = "";
     if (topResult.probability >= 90) {
@@ -473,8 +552,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     resultComment.textContent = comment;
 
-    // 레이더 차트
+    // 연예인 정보 추가
+    if (detail.celebrities && detail.celebrities.length > 0) {
+      const celebTitle = document.createElement('h3');
+      celebTitle.textContent = animalName + translations[currentLang].celebTitle;
+      celebTitle.className = 'celeb-title';
+      celebritySection.appendChild(celebTitle);
+
+      const celebList = document.createElement('div');
+      celebList.className = 'celeb-list';
+      
+      detail.celebrities.forEach(celeb => {
+        const chip = document.createElement('span');
+        chip.className = 'celeb-chip';
+        chip.textContent = celeb;
+        celebList.appendChild(chip);
+      });
+      celebritySection.appendChild(celebList);
+    }
+
+    // 3. 레이더 차트 그리기
     const ctx = document.getElementById('radar-chart').getContext('2d');
+    
+    // 기존 차트가 있다면 파괴 (메모리 누수 및 겹침 방지)
     if (radarChart) {
         radarChart.destroy();
     }
@@ -488,11 +588,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         data: {
             labels: translations[currentLang].chartLabels,
             datasets: [{
-                label: animalName,
+                label: animalName, // Dynamic label
                 data: detail.stats,
                 fill: true,
-                backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.2)', // primary color with opacity
+                borderColor: '#6366f1', // primary color
                 pointBackgroundColor: '#6366f1',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
@@ -514,39 +614,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     suggestedMin: 0,
                     suggestedMax: 100,
                     ticks: {
-                        display: false,
+                        display: false, // 숫자 라벨 숨김 (깔끔하게)
                         stepSize: 20
                     }
                 }
             },
             plugins: {
-                legend: { display: false }
+                legend: { display: false } // 범례 숨김
             }
         }
     });
-
-    const descriptionBox = document.createElement('p');
-    descriptionBox.className = 'animal-description';
-    descriptionBox.textContent = detail.description[currentLang];
-    resultChart.appendChild(descriptionBox);
-
-    if (detail.celebrities && detail.celebrities.length > 0) {
-      const celebTitle = document.createElement('h3');
-      celebTitle.textContent = animalName + translations[currentLang].celebTitle;
-      celebTitle.className = 'celeb-title';
-      celebritySection.appendChild(celebTitle);
-
-      const celebList = document.createElement('div');
-      celebList.className = 'celeb-list';
-      
-      detail.celebrities.forEach(celeb => {
-        const chip = document.createElement('span');
-        chip.className = 'celeb-chip';
-        chip.textContent = celeb;
-        celebList.appendChild(chip);
-      });
-      celebritySection.appendChild(celebList);
-    }
 
     results.forEach(res => {
         const itemDetail = animalDetails[res.name];
@@ -565,9 +642,78 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
       resultChart.appendChild(item);
 
+      // 애니메이션 효과
       setTimeout(() => {
         item.querySelector('.progress-bar-fill').style.width = `${res.probability}%`;
       }, 100);
     });
   }
+  
+  // --- Community Logic (Firestore) ---
+  
+  // 1. 실시간 댓글 읽기 (Listener)
+  if (db) {
+      // 쿼리: timestamp 기준 내림차순(최신순), 최대 50개
+    const q = query(collection(db, "guestbook"), orderBy("timestamp", "desc"), limit(50));
+    
+    // onSnapshot: 데이터가 바뀔 때마다(누가 글을 쓰면) 자동으로 실행됨
+    onSnapshot(q, (snapshot) => {
+      commentList.innerHTML = ''; // 기존 목록 지우고 새로 그리기
+      
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        // 날짜 변환 (Firestore Timestamp -> Date)
+        const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString() : '';
+        
+        const commentItem = document.createElement('div');
+        commentItem.className = 'comment-item';
+        commentItem.innerHTML = `
+          <div class="comment-header">
+            <span class="comment-author">${data.animal} ${data.nickname}</span>
+            <span class="comment-date">${date}</span>
+          </div>
+          <p class="comment-text">${data.message}</p>
+        `;
+        commentList.appendChild(commentItem);
+      });
+    });
+  } else {
+      commentList.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 1rem;">DB 연결 후 이용 가능합니다.</p>';
+  }
+
+  // 2. 댓글 쓰기
+  addCommentBtn.addEventListener('click', async () => {
+    if (!db) {
+        alert("데이터베이스가 연결되지 않았습니다.");
+        return;
+    }
+
+    const nickname = nicknameInput.value.trim();
+    const message = commentInput.value.trim();
+    const animal = animalTypeSelect.value;
+
+    if (!nickname || !message) {
+      alert("닉네임과 내용을 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      // Firestore 'guestbook' 컬렉션에 데이터 추가
+      await addDoc(collection(db, "guestbook"), {
+        nickname: nickname,
+        message: message,
+        animal: animal,
+        timestamp: serverTimestamp() // 서버 시간 자동 기록
+      });
+      
+      // 입력창 초기화
+      commentInput.value = '';
+      // 닉네임은 보통 유지하고 싶어 하므로 놔둠
+      alert("글이 등록되었습니다! 🎉");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      alert("글 등록 중 오류가 발생했습니다.");
+    }
+  });
+
 });
