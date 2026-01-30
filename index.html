@@ -1,4 +1,4 @@
-`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -29,12 +29,15 @@
 <body>
   <div class="container">
     <header>
-      <button id="theme-toggle" class="theme-toggle" aria-label="다크 모드 전환">
-        <!-- Moon Icon (Default) -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-      </button>
-      <h1>나의 동물상 찾기</h1>
-      <p>인공지능이 분석하는 나의 동물상 테스트</p>
+      <div class="header-controls">
+        <button id="lang-toggle" class="lang-toggle" aria-label="언어 변경">EN</button>
+        <button id="theme-toggle" class="theme-toggle" aria-label="다크 모드 전환">
+          <!-- Moon Icon (Default) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+      <h1 data-i18n="title">나의 동물상 찾기</h1>
+      <p data-i18n="subtitle">인공지능이 분석하는 나의 동물상 테스트</p>
     </header>
 
     <main>
@@ -45,23 +48,23 @@
           <canvas id="capture-canvas" class="hidden"></canvas>
           <div id="upload-placeholder" class="placeholder">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <p>사진을 업로드하거나 촬영하세요</p>
+            <p data-i18n="uploadText">사진을 업로드하거나 촬영하세요</p>
           </div>
         </div>
 
         <div class="controls">
           <label for="file-upload" class="btn primary">
-            파일 업로드
+            <span data-i18n="uploadBtn">파일 업로드</span>
             <input type="file" id="file-upload" accept="image/*" class="hidden">
           </label>
-          <button id="start-camera" class="btn secondary">사진 촬영</button>
-          <button id="capture-photo" class="btn hidden">캡처하기</button>
+          <button id="start-camera" class="btn secondary" data-i18n="cameraBtn">사진 촬영</button>
+          <button id="capture-photo" class="btn hidden" data-i18n="captureBtn">캡처하기</button>
         </div>
       </section>
 
       <section id="result-section" class="result-section hidden">
         <div id="share-card" class="share-card">
-          <h2>분류 결과</h2>
+          <h2 data-i18n="resultTitle">분류 결과</h2>
           <div id="result-image-container" class="result-image-container"></div>
           <p id="result-comment" class="result-comment"></p>
           
@@ -77,33 +80,33 @@
           </div>
         </div>
         <div class="result-actions">
-          <button id="save-btn" class="btn primary">결과 이미지 저장</button>
-          <button id="restart-btn" class="btn outline">다시하기</button>
+          <button id="save-btn" class="btn primary" data-i18n="saveBtn">결과 이미지 저장</button>
+          <button id="restart-btn" class="btn outline" data-i18n="retryBtn">다시하기</button>
         </div>
       </section>
 
       <div id="loading" class="loading hidden">
         <div class="spinner"></div>
-        <p>분석 중입니다...</p>
+        <p data-i18n="analyzing">분석 중입니다...</p>
       </div>
 
       <section class="contact-section">
-        <h2>문의하기</h2>
-        <p class="contact-desc">제휴 문의나 서비스에 대한 의견을 보내주세요.</p>
+        <h2 data-i18n="contactTitle">문의하기</h2>
+        <p class="contact-desc" data-i18n="contactDesc">제휴 문의나 서비스에 대한 의견을 보내주세요.</p>
         <!-- 
              TODO: Formspree에서 폼을 생성하고 아래 action URL을 교체하세요.
              예: action="https://formspree.io/f/xxyyzzww"
         -->
         <form action="https://formspree.io/f/mlgbklda" method="POST">
           <div class="form-group">
-            <label for="email">이메일</label>
+            <label for="email" data-i18n="emailLabel">이메일</label>
             <input type="email" id="email" name="email" placeholder="답변 받을 이메일 주소" required>
           </div>
           <div class="form-group">
-            <label for="message">내용</label>
+            <label for="message" data-i18n="messageLabel">내용</label>
             <textarea id="message" name="message" placeholder="문의 내용을 자유롭게 적어주세요" required></textarea>
           </div>
-          <button type="submit" class="btn primary full-width">보내기</button>
+          <button type="submit" class="btn primary full-width" data-i18n="sendBtn">보내기</button>
         </form>
       </section>
     </main>
