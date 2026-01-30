@@ -60,6 +60,10 @@ const translations = {
     messagePlaceholder: "문의 내용을 자유롭게 적어주세요",
     chartLabels: ['귀여움', '세련미', '청순함', '화려함', '친근함'],
     celebTitle: "상 연예인",
+    guideTitle: "동물상별 상세 가이드",
+    guideSubtitle: "나의 동물상에 대해 더 자세히 알아보세요!",
+    traitLabel: "대표적인 특징",
+    styleLabel: "추천 스타일링",
     resultComment: "당신은 '{name}상'입니다!",
     unknown: "알 수 없는 동물상입니다.",
     alertModelLoading: "모델이 아직 로드되지 않았습니다. 잠시만 기다려 주세요.",
@@ -106,6 +110,10 @@ const translations = {
     messagePlaceholder: "Write your message here",
     chartLabels: ['Cute', 'Chic', 'Pure', 'Glam', 'Friendly'],
     celebTitle: " face celebrities",
+    guideTitle: "Animal Face Guide",
+    guideSubtitle: "Learn more about each animal face type!",
+    traitLabel: "Key Traits",
+    styleLabel: "Styling Tips",
     resultComment: "You look like a {name}!",
     unknown: "Unknown animal type.",
     alertModelLoading: "Model is not loaded yet. Please wait.",
@@ -136,6 +144,14 @@ const animalDetails = {
     },
     celebrities: ['송중기', '박보영', '강다니엘', '백현', '아이유'],
     stats: [95, 50, 70, 40, 100], 
+    traits: {
+      ko: '둥글둥글한 얼굴형과 처진 눈매가 특징입니다. 선하고 다정한 인상을 주며 주변 사람들에게 신뢰감을 주는 타입입니다.',
+      en: 'Characterized by a rounded face and slightly drooping eyes. Gives a kind and friendly impression, earning trust from others.'
+    },
+    styling: {
+      ko: '부드러운 니트나 캐주얼한 룩이 잘 어울립니다. 브라운 계열의 아이라이너로 순한 이미지를 강조해보세요.',
+      en: 'Soft knits or casual looks suit you well. Use brown eyeliner to emphasize your gentle image.'
+    },
     comments: {
       high: { ko: "인간 비타민 그 자체! 보기만 해도 기분 좋아지는 댕댕이상 🐶", en: "A human vitamin! You are a total Puppy face that makes people smile 🐶" },
       middle: { ko: "따뜻하고 선한 인상을 가진 강아지상이에요.", en: "You have a warm and kind Puppy face." },
@@ -151,6 +167,14 @@ const animalDetails = {
     },
     celebrities: ['제니', '강동원', '한예슬', '시우민', '안소희'],
     stats: [60, 95, 50, 80, 40], 
+    traits: {
+      ko: '올라간 눈꼬리와 날카로운 콧대가 특징입니다. 도도하고 차가워 보이지만 동시에 신비로운 매력을 풍기는 타입입니다.',
+      en: 'Features upturned eyes and a sharp nose. Appears chic and cold but exudes a mysterious charm.'
+    },
+    styling: {
+      ko: '세련된 블랙 룩이나 스트릿 패션이 잘 어울립니다. 세미 스모키 메이크업으로 시크함을 더해보세요.',
+      en: 'Sophisticated black looks or street fashion suit you. Add chicness with semi-smoky makeup.'
+    },
     comments: {
       high: { ko: "도도하고 세련된 매력 폭발! 매혹적인 고양이상 😼", en: "Chic and sophisticated! A mesmerizing Cat face 😼" },
       middle: { ko: "시크한 도시 남녀 분위기의 고양이상이에요.", en: "You have a chic urban Cat vibe." },
@@ -166,6 +190,14 @@ const animalDetails = {
     },
     celebrities: ['황민현', '예지', '지코', '아이엔', '선미'],
     stats: [50, 90, 30, 95, 60], 
+    traits: {
+      ko: '가늘고 긴 눈매와 화려한 이목구비가 특징입니다. 지적이고 영리해 보이는 인상을 주며 치명적인 매력을 가졌습니다.',
+      en: 'Characterized by long, narrow eyes and glamorous features. Gives an intelligent and sharp impression with a fatal charm.'
+    },
+    styling: {
+      ko: '화려한 액세서리나 포인트를 준 룩이 좋습니다. 캣츠아이 메이크업으로 눈매의 장점을 극대화해보세요.',
+      en: 'Glamorous accessories or accented looks are great. Maximize your eye shape with cat-eye makeup.'
+    },
     comments: {
       high: { ko: "숨만 쉬어도 플러팅? 사람을 홀리는 매력적인 여우상 🦊", en: "Just breathing is flirting? A captivating Fox face 🦊" },
       middle: { ko: "화려하고 센스 있는 분위기의 여우상!", en: "A Fox face with a glamorous and sensible vibe!" },
@@ -181,6 +213,14 @@ const animalDetails = {
     },
     celebrities: ['나연', '정국', '수지', '도영', '장원영'],
     stats: [100, 40, 80, 50, 90], 
+    traits: {
+      ko: '앞니가 살짝 보이고 동그란 눈이 특징입니다. 상큼하고 발랄한 에너지를 뿜어내며 보는 이로 하여금 보호본능을 자극합니다.',
+      en: 'Features slightly prominent front teeth and round eyes. Radiant with fresh energy, stimulating protective instincts in others.'
+    },
+    styling: {
+      ko: '파스텔 톤의 밝은 옷이 잘 어울립니다. 핑크나 코랄 계열의 블러셔로 과즙미를 더해보세요.',
+      en: 'Bright pastel-toned clothes suit you. Add a fruity look with pink or coral blushers.'
+    },
     comments: {
       high: { ko: "상큼발랄 과즙미 팡팡! 인간 토끼 그 자체 🐰", en: "Fresh and fruity! You are a Rabbit itself 🐰" },
       middle: { ko: "귀엽고 순수한 매력의 토끼상이에요.", en: "You have a cute and pure Rabbit face." },
@@ -196,6 +236,14 @@ const animalDetails = {
     },
     celebrities: ['윤아', '차은우', '김진우', '미주', '최강창민'],
     stats: [60, 80, 100, 40, 70], 
+    traits: {
+      ko: '맑고 큰 눈망울과 가늘고 긴 목선이 특징입니다. 우아하고 기품 있는 분위기를 자아내며 정갈하고 깨끗한 느낌을 줍니다.',
+      en: 'Characterized by clear, large eyes and a slender neck. Exudes an elegant and noble vibe with a neat and clean feel.'
+    },
+    styling: {
+      ko: '깔끔한 셔츠나 우아한 원피스가 잘 어울립니다. 투명하고 깨끗한 피부 표현에 집중한 메이크업을 추천합니다.',
+      en: 'Neat shirts or elegant dresses suit you. We recommend makeup that focuses on clear and transparent skin.'
+    },
     comments: {
       high: { ko: "분위기 여신/남신 등극! 우아하고 청초한 사슴상 🦌", en: "Atmosphere Goddess/God! An elegant and pure Deer face 🦌" },
       middle: { ko: "맑고 깨끗한 분위기의 사슴상이에요.", en: "You have a clear and clean Deer face." },
@@ -285,11 +333,44 @@ document.addEventListener('DOMContentLoaded', async () => {
       animalOptions[4].text = `${animalDetails['사슴'].name[lang]} 🦌`;
       animalOptions[5].text = `${translations[lang]['bystander']} 👻`;
 
-      // 4. Toggle Button Text
+      // 4. 가이드 섹션 업데이트
+      renderAnimalGuide(lang);
+
+      // 5. Toggle Button Text
       langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
       
-      // 5. HTML lang attribute
+      // 6. HTML lang attribute
       document.documentElement.lang = lang;
+  }
+
+  function renderAnimalGuide(lang) {
+      const guideGrid = document.getElementById('guide-grid');
+      if (!guideGrid) return;
+      
+      guideGrid.innerHTML = '';
+      
+      Object.keys(animalDetails).forEach(key => {
+          const detail = animalDetails[key];
+          const card = document.createElement('div');
+          card.className = 'guide-card';
+          card.innerHTML = `
+            <div class="guide-card-header">
+                <span class="guide-emoji">${detail.emoji}</span>
+                <h3 class="guide-name">${detail.name[lang]}</h3>
+            </div>
+            <div class="guide-body">
+                <div class="guide-item">
+                    <span class="guide-label">${translations[lang].traitLabel}</span>
+                    <p>${detail.traits[lang]}</p>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-label">${translations[lang].styleLabel}</span>
+                    <p>${detail.styling[lang]}</p>
+                </div>
+            </div>
+          `;
+          guideGrid.appendChild(card);
+      });
   }
 
   // 다크 모드 초기 설정
