@@ -706,6 +706,28 @@ body.dark-mode .guide-card {
 
 footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.875rem; }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  .header-controls {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background: var(--card-bg);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--input-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0.9;
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    margin-top: 1rem;
+  }
+
   .input-row { grid-template-columns: 1fr 1fr; }
 }
