@@ -486,12 +486,38 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.runAnalysis = async function(imageElement) {
     if (!model) { alert(translations[currentLang].alertModelLoading); return; }
     loading.classList.remove('hidden'); resultSection.classList.add('hidden');
+    
     try {
-      const prediction = await model.predict(imageElement);
+      // 모바일 최적화: 이미지를 분석용 캔버스로 리사이징 (메모리 부족 방지)
+      const analysisCanvas = document.createElement('canvas');
+      const ctx = analysisCanvas.getContext('2d');
+      const maxSize = 400; // 모델 분석에 충분한 크기
+      
+      let width = imageElement.naturalWidth || imageElement.width;
+      let height = imageElement.naturalHeight || imageElement.height;
+      
+      if (width > height) {
+        if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+      } else {
+        if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+      }
+      
+      analysisCanvas.width = width;
+      analysisCanvas.height = height;
+      ctx.drawImage(imageElement, 0, 0, width, height);
+      
+      const prediction = await model.predict(analysisCanvas);
       const results = prediction.map(p => ({ name: p.className, probability: p.probability * 100 })).sort((a, b) => b.probability - a.probability);
       displayResults(results, imageElement.src);
-    } catch (err) { console.error(err); alert(translations[currentLang].alertError); }
-    finally { loading.classList.add('hidden'); resultSection.classList.remove('hidden'); resultSection.scrollIntoView({ behavior: 'smooth' }); }
+    } catch (err) { 
+      console.error("Analysis Error Details:", err); 
+      alert(translations[currentLang].alertError); 
+    }
+    finally { 
+      loading.classList.add('hidden'); 
+      resultSection.classList.remove('hidden'); 
+      resultSection.scrollIntoView({ behavior: 'smooth' }); 
+    }
   };
 
   function displayResults(results, imageSrc) {
