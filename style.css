@@ -108,22 +108,25 @@ header p {
 
 .main-nav {
   position: sticky;
-  top: 0;
+  top: 1rem;
   z-index: 900;
   background: var(--card-bg);
-  margin: 0 -1rem 2rem;
-  padding: 0.8rem 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin: 0 auto 2.5rem;
+  padding: 0.7rem 2rem;
+  border-radius: 3rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--input-border);
+  border: 1px solid var(--input-border);
+  width: fit-content;
+  max-width: 90%;
 }
 
 .main-nav ul {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .main-nav a {
@@ -131,12 +134,14 @@ header p {
   color: var(--text-main);
   font-size: 0.95rem;
   font-weight: 700;
-  transition: color 0.2s;
-  padding: 0.5rem 0;
+  transition: all 0.2s ease;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.5rem;
 }
 
 .main-nav a:hover {
   color: var(--primary-color);
+  background: var(--desc-bg);
 }
 
 .upload-section {
