@@ -98,14 +98,15 @@
           <div class="input-row">
             <input type="text" id="nickname" placeholder="닉네임" maxlength="10">
             <input type="password" id="password" placeholder="비밀번호" maxlength="4" class="input-short">
-            <select id="animal-type-select">
-              <option value="🐶">강아지 🐶</option>
-              <option value="🐱">고양이 🐱</option>
-              <option value="🦊">여우 🦊</option>
-              <option value="🐰">토끼 🐰</option>
-              <option value="🦌">사슴 🦌</option>
-              <option value="👻"><span data-i18n="bystander">구경꾼</span> 👻</option>
-            </select>
+          </div>
+          <div id="animal-selection-group" class="animal-selection-group">
+            <button type="button" class="animal-chip selected" data-value="🐶">🐶</button>
+            <button type="button" class="animal-chip" data-value="🐱">🐱</button>
+            <button type="button" class="animal-chip" data-value="🦊">🦊</button>
+            <button type="button" class="animal-chip" data-value="🐰">🐰</button>
+            <button type="button" class="animal-chip" data-value="🦌">🦌</button>
+            <button type="button" class="animal-chip" data-value="👻" title="구경꾼">👻</button>
+            <input type="hidden" id="animal-type-hidden" value="🐶">
           </div>
           <textarea id="comment-input" placeholder="나의 동물상은? 자유롭게 이야기를 남겨보세요!" maxlength="100"></textarea>
           <button id="add-comment-btn" class="btn primary full-width" data-i18n="postBtn">글 남기기</button>

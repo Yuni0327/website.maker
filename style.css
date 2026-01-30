@@ -343,20 +343,14 @@ header p {
   justify-content: center;
 }
 
-/* Community Section */
+/* Community Section Improvements */
 .community-section {
-  margin-top: 2rem;
+  margin-top: 3rem;
   background: var(--card-bg);
   padding: 2rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  transition: background-color 0.3s, transform 0.2s;
   border: 1px solid var(--input-border);
-}
-
-.community-section h2 {
-  text-align: center;
-  margin-bottom: 0.5rem;
 }
 
 .community-form {
@@ -366,7 +360,7 @@ header p {
   border-radius: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .input-row {
@@ -375,7 +369,7 @@ header p {
   gap: 0.5rem;
 }
 
-#nickname, #password, #animal-type-select, #comment-input {
+#nickname, #password, #comment-input {
   width: 100%;
   padding: 0.8rem;
   border: 1.5px solid var(--input-border);
@@ -387,19 +381,83 @@ header p {
   outline: none;
 }
 
-#nickname:focus, #password:focus, #animal-type-select:focus, #comment-input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+.animal-selection-group {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
 }
 
-#animal-type-select {
-  grid-column: span 2;
+.animal-chip {
+  background: var(--card-bg);
+  border: 1px solid var(--input-border);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
   cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#comment-input {
-  min-height: 100px;
-  resize: none;
+.animal-chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-color);
+}
+
+.animal-chip.selected {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  transform: scale(1.1);
+}
+
+/* Contact Section (Improved as a card) */
+.contact-section {
+  margin-top: 3rem;
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--input-border);
+}
+
+.contact-section h2 {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Guide Section Spacing */
+.guide-section {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+.guide-stack-wrapper {
+  position: relative;
+  max-width: 450px;
+  margin: 2rem auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Overall Balance */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+@media (max-width: 480px) {
+  .input-row {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .comment-list {

@@ -352,6 +352,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // --- Community Logic ---
+  const animalChips = document.querySelectorAll('.animal-chip');
+  const animalTypeHidden = document.getElementById('animal-type-hidden');
+
+  animalChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      animalChips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      animalTypeHidden.value = chip.dataset.value;
+    });
+  });
+
   if (db) {
     const q = query(collection(db, "guestbook"), orderBy("timestamp", "desc"), limit(100));
     onSnapshot(q, (snapshot) => {
@@ -451,7 +462,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pw = container.querySelector('.reply-password').value.trim();
     const msg = container.querySelector('.reply-input').value.trim();
     if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
-    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeSelect.value, parentId: pid, timestamp: serverTimestamp() });
+    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, parentId: pid, timestamp: serverTimestamp() });
     alert(translations[currentLang].alertReplySuccess);
   }
 
@@ -460,7 +471,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pw = passwordInput.value.trim();
     const msg = commentInput.value.trim();
     if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
-    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeSelect.value, timestamp: serverTimestamp() });
+    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, timestamp: serverTimestamp() });
     commentInput.value = ''; passwordInput.value = '';
     alert(translations[currentLang].alertPostSuccess);
   });
