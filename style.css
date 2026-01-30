@@ -219,6 +219,23 @@ header p {
   object-fit: cover;
 }
 
+.result-comment {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  word-break: keep-all;
+}
+
+.radar-chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 2rem;
+}
+
 .top-emoji {
   font-size: 4rem;
   margin-bottom: 0.5rem;

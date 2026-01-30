@@ -63,6 +63,12 @@
         <div id="share-card" class="share-card">
           <h2>분류 결과</h2>
           <div id="result-image-container" class="result-image-container"></div>
+          <p id="result-comment" class="result-comment"></p>
+          
+          <div class="radar-chart-container">
+            <canvas id="radar-chart"></canvas>
+          </div>
+
           <div id="result-chart" class="chart-container">
             <!-- JS로 동적 생성됨 -->
           </div>
@@ -110,6 +116,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script defer type="module" src="/main.js"></script>
 </body>
 </html>
