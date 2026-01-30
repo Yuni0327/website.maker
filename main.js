@@ -399,13 +399,50 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateStackUI();
   }
 
-  // 가이드 컨트롤 이벤트 리스너 (한 번만 등록되도록 renderAnimalGuide 외부 혹은 초기화 시점에 배치)
+  // 가이드 컨트롤 이벤트 리스너
   document.getElementById('next-guide')?.addEventListener('click', nextGuide);
   document.getElementById('prev-guide')?.addEventListener('click', prevGuide);
 
   function updateLanguage(lang) {
+      // 1. Static Text Update
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+          const key = element.getAttribute('data-i18n');
+          if (translations[lang][key]) {
+              element.textContent = translations[lang][key];
+          }
+      });
+      
+      // 2. Placeholder & Input Update
+      document.getElementById('email').placeholder = translations[lang]['emailPlaceholder'];
+      document.getElementById('message').placeholder = translations[lang]['messagePlaceholder'];
+      document.getElementById('nickname').placeholder = translations[lang]['nickname'];
+      document.getElementById('password').placeholder = translations[lang]['password'];
+      document.getElementById('comment-input').placeholder = translations[lang]['inputPlaceholder'];
 
-  // 다크 모드 초기 설정
+      // 3. Dropdown Update
+      const animalTypeSelect = document.getElementById('animal-type-select');
+      if (animalTypeSelect) {
+        const animalOptions = animalTypeSelect.options;
+        animalOptions[0].text = `${animalDetails['강아지'].name[lang]} 🐶`;
+        animalOptions[1].text = `${animalDetails['고양이'].name[lang]} 🐱`;
+        animalOptions[2].text = `${animalDetails['여우'].name[lang]} 🦊`;
+        animalOptions[3].text = `${animalDetails['토끼'].name[lang]} 🐰`;
+        animalOptions[4].text = `${animalDetails['사슴'].name[lang]} 🦌`;
+        animalOptions[5].text = `${translations[lang]['bystander']} 👻`;
+      }
+
+      // 4. 가이드 섹션 업데이트
+      renderAnimalGuide(lang);
+
+      // 5. Toggle Button Text
+      langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
+      
+      // 6. HTML lang attribute
+      document.documentElement.lang = lang;
+  }
+
+  // 초기 실행
+  updateLanguage(currentLang);
   const currentTheme = localStorage.getItem('theme');
   if (currentTheme === 'dark') {
     body.classList.add('dark-mode');
