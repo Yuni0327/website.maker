@@ -18,7 +18,7 @@ try {
   const app = initializeApp(firebaseConfig);
   db = getFirestore(app);
 } catch (e) {
-  console.log("Firebase config not set yet.");
+  console.log("Firebase config error.");
 }
 
 const URL = "https://teachablemachine.withgoogle.com/models/mrrlxN-j5/";
@@ -26,6 +26,7 @@ let model, maxPredictions;
 let radarChart = null;
 let currentLang = localStorage.getItem('lang') || (navigator.language.startsWith('ko') ? 'ko' : 'en');
 let currentGuideIndex = 0;
+let stream = null;
 
 // Translation Data
 const translations = {
@@ -138,8 +139,8 @@ const animalDetails = {
     description: { ko: '사랑스럽고 부드러운 인상을 가진 당신은 보는 사람을 무장해제시키는 매력이 있습니다.', en: 'You have a lovely and soft impression.' },
     celebrities: ['송중기', '박보영', '강다니엘'],
     stats: [95, 50, 70, 40, 100], 
-    traits: { ko: '둥글둥글한 얼굴형과 처진 눈매가 특징입니다.', en: 'Characterized by a rounded face.' },
-    styling: { ko: '부드러운 니트나 캐주얼한 룩이 잘 어울립니다.', en: 'Soft knits suit you well.' },
+    traits: { ko: '둥글둥글한 얼굴형과 처진 눈매가 특징입니다. 선하고 다정한 인상을 줍니다.', en: 'Characterized by a rounded face and friendly eyes.' },
+    styling: { ko: '부드러운 니트나 캐주얼한 룩이 잘 어울립니다. 브라운 계열 메이크업을 추천합니다.', en: 'Soft knits and brown makeup suit you well.' },
     comments: { high: { ko: "인간 비타민! 🐶", en: "Human Vitamin! 🐶" }, middle: { ko: "따뜻한 강아지상이에요.", en: "Warm Puppy face." }, low: { ko: "귀여운 느낌이 있네요.", en: "A bit of cute vibes." } }
   },
   '고양이': {
@@ -148,8 +149,8 @@ const animalDetails = {
     description: { ko: '세련되고 도시적인 분위기를 풍기는 당신은 시크하면서도 묘한 매력을 가졌습니다.', en: 'You have a chic and urban vibe.' },
     celebrities: ['제니', '강동원', '한예슬'],
     stats: [60, 95, 50, 80, 40], 
-    traits: { ko: '올라간 눈꼬리와 날카로운 콧대가 특징입니다.', en: 'Features upturned eyes.' },
-    styling: { ko: '세련된 블랙 룩이나 스트릿 패션이 잘 어울립니다.', en: 'Sophisticated black looks suit you.' },
+    traits: { ko: '올라간 눈꼬리와 날카로운 콧대가 특징입니다. 신비롭고 도도한 매력을 풍깁니다.', en: 'Features upturned eyes and a sharp nose.' },
+    styling: { ko: '세련된 블랙 룩이나 스트릿 패션이 잘 어울립니다. 세미 스모키 메이크업이 좋습니다.', en: 'Sophisticated black looks suit you.' },
     comments: { high: { ko: "매혹적인 고양이상 😼", en: "Mesmerizing Cat face 😼" }, middle: { ko: "시크한 분위기의 고양이상이에요.", en: "Chic Cat vibe." }, low: { ko: "고양이 같은 매력이 보이네요.", en: "Cat-like charm visible." } }
   },
   '여우': {
@@ -158,8 +159,8 @@ const animalDetails = {
     description: { ko: '홀릴 듯한 매력적인 눈웃음과 화려한 이목구비를 가졌습니다.', en: 'You have attractive smiling eyes.' },
     celebrities: ['황민현', '예지', '지코'],
     stats: [50, 90, 30, 95, 60], 
-    traits: { ko: '가늘고 긴 눈매와 화려한 이목구비가 특징입니다.', en: 'Characterized by long eyes.' },
-    styling: { ko: '화려한 액세서리나 포인트를 준 룩이 좋습니다.', en: 'Glamorous accessories are great.' },
+    traits: { ko: '가늘고 긴 눈매와 화려한 이목구비가 특징입니다. 지적이고 영리해 보입니다.', en: 'Characterized by long eyes and glamorous features.' },
+    styling: { ko: '화려한 액세서리나 포인트를 준 룩이 좋습니다. 캣츠아이 메이크업을 해보세요.', en: 'Glamorous accessories are great.' },
     comments: { high: { ko: "사람을 홀리는 매력적인 여우상 🦊", en: "Captivating Fox face 🦊" }, middle: { ko: "화려한 분위기의 여우상!", en: "Fox face with glamour!" }, low: { ko: "여우 같은 분위기가 풍기네요.", en: "Fox vibes visible." } }
   },
   '토끼': {
@@ -168,8 +169,8 @@ const animalDetails = {
     description: { ko: '동그란 눈과 맑은 피부, 상큼한 분위기를 가진 당신은 인간 토끼입니다.', en: 'With round eyes, you are a human Rabbit.' },
     celebrities: ['나연', '정국', '수지'],
     stats: [100, 40, 80, 50, 90], 
-    traits: { ko: '앞니가 살짝 보이고 동그란 눈이 특징입니다.', en: 'Features round eyes.' },
-    styling: { ko: '파스텔 톤의 밝은 옷이 잘 어울립니다.', en: 'Bright pastel clothes suit you.' },
+    traits: { ko: '앞니가 살짝 보이고 동그란 눈이 특징입니다. 상큼하고 발랄한 에너지를 뿜어냅니다.', en: 'Features round eyes and fresh energy.' },
+    styling: { ko: '파스텔 톤의 밝은 옷이 잘 어울립니다. 핑크나 코랄 블러셔를 활용해보세요.', en: 'Bright pastel clothes suit you.' },
     comments: { high: { ko: "인간 토끼 그 자체 🐰", en: "Rabbit itself 🐰" }, middle: { ko: "순수한 매력의 토끼상이에요.", en: "Pure Rabbit face." }, low: { ko: "토끼 같은 귀여움이 있네요.", en: "Rabbit-like cuteness." } }
   },
   '사슴': {
@@ -178,8 +179,8 @@ const animalDetails = {
     description: { ko: '긴 목선과 맑고 깊은 눈망울을 가진 당신은 우아한 분위기의 소유자입니다.', en: 'You have an elegant atmosphere.' },
     celebrities: ['윤아', '차은우', '김진우'],
     stats: [60, 80, 100, 40, 70], 
-    traits: { ko: '맑고 큰 눈망울과 가늘고 긴 목선이 특징입니다.', en: 'Characterized by clear eyes.' },
-    styling: { ko: '깔끔한 셔츠나 우아한 원피스가 잘 어울립니다.', en: 'Neat shirts suit you.' },
+    traits: { ko: '맑고 큰 눈망울과 가늘고 긴 목선이 특징입니다. 기품 있고 정갈한 느낌을 줍니다.', en: 'Characterized by clear eyes and a slender neck.' },
+    styling: { ko: '깔끔한 셔츠나 우아한 원피스가 잘 어울립니다. 깨끗한 메이크업을 추천합니다.', en: 'Neat shirts suit you.' },
     comments: { high: { ko: "우아하고 청초한 사슴상 🦌", en: "Elegant Deer face 🦌" }, middle: { ko: "맑은 분위기의 사슴상이에요.", en: "Clear Deer face." }, low: { ko: "사슴 같은 눈망울을 가지셨네요.", en: "Deer-like eyes." } }
   }
 };
@@ -215,13 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const guideStack = document.getElementById('guide-stack');
   const stackDots = document.getElementById('stack-dots');
 
-  // --- Theme & Language Init ---
-  const currentTheme = localStorage.getItem('theme');
-  if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    body.classList.add('dark-mode');
-    updateThemeIcon(true);
-  }
-
+  // --- Theme & Language ---
   function updateThemeIcon(isDarkMode) {
     themeToggle.innerHTML = isDarkMode 
       ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
@@ -267,7 +262,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateLanguage(nextLang);
   });
 
-  // --- Guide Logic ---
+  // --- Guide Card Stack Logic ---
   function renderAnimalGuide(lang) {
     if (!guideStack || !stackDots) return;
     guideStack.innerHTML = '';
@@ -445,10 +440,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   loadModel().catch(e => console.error(e));
 
-  // ... (기존 카메라/업로드 로직 유지) ...
-  // (여기에 기존 runAnalysis, displayResults, handleFiles 등 분석 로직이 들어갑니다)
-  // 편의상 이 부분은 기존 코드를 그대로 유지하는 것으로 처리합니다.
-  
   window.runAnalysis = async function(imageElement) {
     if (!model) { alert(translations[currentLang].alertModelLoading); return; }
     loading.classList.remove('hidden'); resultSection.classList.add('hidden');
@@ -492,7 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // --- Upload/Camera Event Handlers ---
+  // --- Upload Handlers ---
   fileUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -531,6 +522,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const link = document.createElement('a'); link.download = 'animal-face-result.png'; link.href = canvas.toDataURL(); link.click();
   });
 
-  // --- Initial Execute ---
+  // --- Init ---
   updateLanguage(currentLang);
+  const currentThemeInit = localStorage.getItem('theme');
+  if (currentThemeInit === 'dark') { body.classList.add('dark-mode'); updateThemeIcon(true); }
 });
