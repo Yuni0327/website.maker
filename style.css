@@ -728,3 +728,107 @@ footer {
   color: var(--text-muted);
   font-size: 0.875rem;
 }
+
+/* Guide Section */
+.guide-section {
+  margin-top: 5rem;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+.guide-section h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.guide-card {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--input-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.guide-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary-color);
+}
+
+.guide-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.guide-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.guide-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  position: relative;
+}
+
+.guide-name::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  background: var(--primary-color);
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+.guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.guide-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.guide-label {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+.guide-item p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-main);
+  word-break: keep-all;
+  opacity: 0.9;
+}
