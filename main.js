@@ -59,6 +59,9 @@ const translations = {
     emailPlaceholder: "답변 받을 이메일 주소",
     messagePlaceholder: "문의 내용을 자유롭게 적어주세요",
     chartLabels: ['귀여움', '세련미', '청순함', '화려함', '친근함'],
+    navTest: "테스트",
+    navGuide: "가이드",
+    navCommunity: "수다방",
     celebTitle: "상 연예인",
     guideTitle: "동물상별 상세 가이드",
     guideSubtitle: "나의 동물상에 대해 더 자세히 알아보세요!",
@@ -110,6 +113,9 @@ const translations = {
     emailPlaceholder: "Your email address",
     messagePlaceholder: "Write your message here",
     chartLabels: ['Cute', 'Chic', 'Pure', 'Glam', 'Friendly'],
+    navTest: "Test",
+    navGuide: "Guide",
+    navCommunity: "Chat",
     celebTitle: " face celebrities",
     guideTitle: "Animal Face Guide",
     guideSubtitle: "Learn more about each animal face type!",
@@ -631,4 +637,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   updateLanguage(currentLang);
   if (localStorage.getItem('theme') === 'dark') { body.classList.add('dark-mode'); updateThemeIcon(true); }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('.main-nav a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        const offset = document.querySelector('.main-nav').offsetHeight + 20;
+        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      }
+    });
+  });
 });
