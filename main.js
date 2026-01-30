@@ -207,9 +207,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resultImageContainer = document.getElementById('result-image-container');
   const celebritySection = document.getElementById('celebrity-section');
   const resultComment = document.getElementById('result-comment');
-  const commentInput = document.getElementById('comment-input');
   const nicknameInput = document.getElementById('nickname');
   const passwordInput = document.getElementById('password');
+  const commentInput = document.getElementById('comment-input');
   const addCommentBtn = document.getElementById('add-comment-btn');
   const commentList = document.getElementById('comment-list');
   const guideStack = document.getElementById('guide-stack');
@@ -233,8 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateChartTheme(isDark) {
     if (!radarChart) return;
     const color = isDark ? '#f1f5f9' : '#1e293b';
-    const gridColor = isDark ? '#475569' : '#e2e8f0';
-    
+    const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
     radarChart.options.scales.r.angleLines.color = gridColor;
     radarChart.options.scales.r.grid.color = gridColor;
     radarChart.options.scales.r.pointLabels.color = color;
@@ -247,20 +246,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const key = el.getAttribute('data-i18n');
       if (translations[lang][key]) el.textContent = translations[lang][key];
     });
-    document.getElementById('email').placeholder = translations[lang].emailPlaceholder;
-    document.getElementById('message').placeholder = translations[lang].messagePlaceholder;
-    document.getElementById('nickname').placeholder = translations[lang].nickname;
-    document.getElementById('password').placeholder = translations[lang].password;
-    document.getElementById('comment-input').placeholder = translations[lang].inputPlaceholder;
+    const emailEl = document.getElementById('email');
+    const messageEl = document.getElementById('message');
+    if (emailEl) emailEl.placeholder = translations[lang].emailPlaceholder;
+    if (messageEl) messageEl.placeholder = translations[lang].messagePlaceholder;
+    if (nicknameInput) nicknameInput.placeholder = translations[lang].nickname;
+    if (passwordInput) passwordInput.placeholder = translations[lang].password;
+    if (commentInput) commentInput.placeholder = translations[lang].inputPlaceholder;
     
-    if (animalTypeSelect) {
-      animalTypeSelect.options[0].text = `${animalDetails['강아지'].name[lang]} 🐶`;
-      animalTypeSelect.options[1].text = `${animalDetails['고양이'].name[lang]} 🐱`;
-      animalTypeSelect.options[2].text = `${animalDetails['여우'].name[lang]} 🦊`;
-      animalTypeSelect.options[3].text = `${animalDetails['토끼'].name[lang]} 🐰`;
-      animalTypeSelect.options[4].text = `${animalDetails['사슴'].name[lang]} 🦌`;
-      animalTypeSelect.options[5].text = `${translations[lang].bystander} 👻`;
-    }
     renderAnimalGuide(lang);
     langToggle.textContent = lang === 'ko' ? 'EN' : 'KO';
     document.documentElement.lang = lang;
@@ -301,54 +294,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateStackUI() {
     const cards = document.querySelectorAll('.guide-card');
     const dots = document.querySelectorAll('.dot');
-    
+    if (cards.length === 0) return;
+
     cards.forEach((card) => {
       const index = parseInt(card.dataset.index);
       let relativeIndex = (index - currentGuideIndex + animalKeys.length) % animalKeys.length;
-      
       card.classList.remove('stack-1', 'stack-2', 'stack-3', 'stack-hidden', 'pass-back');
-      
-      if (relativeIndex === 0) {
-        card.classList.add('stack-1');
-      } else if (relativeIndex === 1) {
-        card.classList.add('stack-2');
-      } else if (relativeIndex === 2) {
-        card.classList.add('stack-3');
-      } else {
-        card.classList.add('stack-hidden');
-      }
+      if (relativeIndex === 0) card.classList.add('stack-1');
+      else if (relativeIndex === 1) card.classList.add('stack-2');
+      else if (relativeIndex === 2) card.classList.add('stack-3');
+      else card.classList.add('stack-hidden');
     });
-    
     dots.forEach((dot, i) => dot.classList.toggle('active', i === currentGuideIndex));
   }
 
   function nextGuide() {
     const currentCard = document.querySelector(`.guide-card[data-index="${currentGuideIndex}"]`);
     if (!currentCard || currentCard.classList.contains('pass-back')) return;
-    
     currentCard.classList.add('pass-back');
-    
     setTimeout(() => {
       currentGuideIndex = (currentGuideIndex + 1) % animalKeys.length;
       updateStackUI();
-    }, 650); // Matches CSS animation duration
+    }, 650);
   }
 
   function prevGuide() {
-    // For previous, we just update the index and let updateStackUI handle the positions
     currentGuideIndex = (currentGuideIndex - 1 + animalKeys.length) % animalKeys.length;
     updateStackUI();
   }
 
-  document.getElementById('next-guide')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    nextGuide();
-  });
-
-  document.getElementById('prev-guide')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    prevGuide();
-  });
+  document.getElementById('next-guide')?.addEventListener('click', (e) => { e.preventDefault(); nextGuide(); });
+  document.getElementById('prev-guide')?.addEventListener('click', (e) => { e.preventDefault(); prevGuide(); });
 
   // --- Community Logic ---
   const animalChips = document.querySelectorAll('.animal-chip');
@@ -358,13 +334,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     chip.addEventListener('click', () => {
       animalChips.forEach(c => c.classList.remove('selected'));
       chip.classList.add('selected');
-      animalTypeHidden.value = chip.dataset.value;
+      if (animalTypeHidden) animalTypeHidden.value = chip.dataset.value;
     });
   });
 
   if (db) {
     const q = query(collection(db, "guestbook"), orderBy("timestamp", "desc"), limit(100));
     onSnapshot(q, (snapshot) => {
+      if (!commentList) return;
       commentList.innerHTML = '';
       const allDocs = [];
       snapshot.forEach(doc => allDocs.push({ id: doc.id, ...doc.data() }));
@@ -461,19 +438,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pw = container.querySelector('.reply-password').value.trim();
     const msg = container.querySelector('.reply-input').value.trim();
     if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
-    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, parentId: pid, timestamp: serverTimestamp() });
+    if (db) await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, parentId: pid, timestamp: serverTimestamp() });
     alert(translations[currentLang].alertReplySuccess);
   }
 
-  addCommentBtn.addEventListener('click', async () => {
-    const nick = nicknameInput.value.trim();
-    const pw = passwordInput.value.trim();
-    const msg = commentInput.value.trim();
-    if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
-    await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, timestamp: serverTimestamp() });
-    commentInput.value = ''; passwordInput.value = '';
-    alert(translations[currentLang].alertPostSuccess);
-  });
+  if (addCommentBtn) {
+    addCommentBtn.addEventListener('click', async () => {
+      const nick = nicknameInput.value.trim();
+      const pw = passwordInput.value.trim();
+      const msg = commentInput.value.trim();
+      if (!nick || !pw || !msg) { alert(translations[currentLang].alertInputAll); return; }
+      if (db) await addDoc(collection(db, "guestbook"), { nickname: nick, password: pw, message: msg, animal: animalTypeHidden.value, timestamp: serverTimestamp() });
+      commentInput.value = ''; passwordInput.value = '';
+      alert(translations[currentLang].alertPostSuccess);
+    });
+  }
 
   // --- TM Model Logic ---
   async function loadModel() {
@@ -487,27 +466,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     loading.classList.remove('hidden'); resultSection.classList.add('hidden');
     
     try {
-      // 1. TensorFlow.js 백엔드 강제 확인 (모바일 웹 환경 최적화)
       await tf.ready();
-      
-      // 2. 이미지 디코딩 확인 (사파리 'null is not an object' 방지)
       if (typeof imageElement.decode === 'function') {
-        try { await imageElement.decode(); } catch (e) { console.warn("Image decode failed, proceeding anyway"); }
+        try { await imageElement.decode(); } catch (e) { console.warn("Image decode failed"); }
       }
 
-      // 3. 분석용 캔버스 생성 및 컨텍스트 체크
       const analysisCanvas = document.createElement('canvas');
       const ctx = analysisCanvas.getContext('2d', { willReadFrequently: true });
-      
-      if (!ctx) {
-        throw new Error("Canvas context is null (Memory Pressure?)");
-      }
+      if (!ctx) throw new Error("Canvas context is null");
 
       const maxSize = 400; 
       let width = imageElement.naturalWidth || imageElement.width;
       let height = imageElement.naturalHeight || imageElement.height;
-      
-      if (width === 0 || height === 0) throw new Error("Image not fully loaded");
+      if (width === 0 || height === 0) throw new Error("Image not loaded");
 
       if (width > height) {
         if (width > maxSize) { height *= maxSize / width; width = maxSize; }
@@ -517,25 +488,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       analysisCanvas.width = width;
       analysisCanvas.height = height;
-      
-      // 4. 드로우 실행 전 안전 장치
       ctx.clearRect(0, 0, width, height);
       ctx.drawImage(imageElement, 0, 0, width, height);
       
-      // 5. 예측 실행 (tf.tidy로 메모리 관리)
       const prediction = await model.predict(analysisCanvas);
-      
-      const results = prediction.map(p => ({ 
-        name: p.className, 
-        probability: p.probability * 100 
-      })).sort((a, b) => b.probability - a.probability);
-      
+      const results = prediction.map(p => ({ name: p.className, probability: p.probability * 100 })).sort((a, b) => b.probability - a.probability);
       displayResults(results, imageElement.src);
     } catch (err) { 
       console.error("Analysis Error:", err);
-      // 사용자에게 더 친절하고 구체적인 메시지 제공
-      const errorMsg = err.message || "Unknown error";
-      alert(translations[currentLang].alertError + "\n(" + errorMsg.substring(0, 40) + ")"); 
+      alert(translations[currentLang].alertError + "\n(" + err.message.substring(0, 40) + ")"); 
     }
     finally { 
       loading.classList.add('hidden'); 
@@ -545,16 +506,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   function displayResults(results, imageSrc) {
+    if (!resultChart || !celebritySection || !resultImageContainer || !resultComment) return;
     resultChart.innerHTML = ''; celebritySection.innerHTML = ''; resultImageContainer.innerHTML = ''; resultComment.textContent = '';
     const clonedImage = document.createElement('img'); clonedImage.src = imageSrc; clonedImage.className = 'result-user-image'; resultImageContainer.appendChild(clonedImage);
     const topResult = results[0];
     const detail = animalDetails[topResult.name] || { name: { ko: topResult.name, en: 'Unknown' }, emoji: '❓', description: { ko: '', en: '' }, celebrities: [], stats: [50,50,50,50,50], comments: { high:{ko:'',en:''}, middle:{ko:'',en:''}, low:{ko:'',en:''} } };
     
-    // 분석 결과에 따라 커뮤니티 섹션의 동물 칩 자동 선택
     if (detail.emoji) {
-      const animalTypeHidden = document.getElementById('animal-type-hidden');
       if (animalTypeHidden) animalTypeHidden.value = detail.emoji;
-      
       const chips = document.querySelectorAll('.animal-chip');
       chips.forEach(chip => {
         if (chip.dataset.value === detail.emoji) chip.classList.add('selected');
@@ -563,105 +522,52 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const animalName = detail.name[currentLang] || topResult.name;
-    shareCard.querySelector('h2').innerHTML = `<div class="top-emoji">${detail.emoji}</div><div>${translations[currentLang].resultComment.replace('{name}', animalName)}</div>`;
+    const shareCardH2 = shareCard.querySelector('h2');
+    if (shareCardH2) shareCardH2.innerHTML = `<div class="top-emoji">${detail.emoji}</div><div>${translations[currentLang].resultComment.replace('{name}', animalName)}</div>`;
+    
     const desc = document.createElement('p'); desc.className = 'animal-description'; desc.textContent = detail.description[currentLang]; resultChart.appendChild(desc);
     resultComment.textContent = topResult.probability >= 90 ? detail.comments.high[currentLang] : topResult.probability >= 50 ? detail.comments.middle[currentLang] : detail.comments.low[currentLang];
+    
     if (detail.celebrities) {
       const t = document.createElement('h3'); t.textContent = animalName + translations[currentLang].celebTitle; t.className = 'celeb-title'; celebritySection.appendChild(t);
       const list = document.createElement('div'); list.className = 'celeb-list';
       detail.celebrities.forEach(c => { const chip = document.createElement('span'); chip.className = 'celeb-chip'; chip.textContent = c; list.appendChild(chip); });
       celebritySection.appendChild(list);
     }
-    const ctx = document.getElementById('radar-chart').getContext('2d');
-    if (radarChart) radarChart.destroy();
-    const isDark = body.classList.contains('dark-mode');
-    
-    // Get primary color from CSS
-    let primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#6366f1';
-    
-    // Convert RGB to RGBA for chart background if necessary
-    let bgColor = primaryColor;
-    if (primaryColor.startsWith('rgb')) {
-      bgColor = primaryColor.replace('rgb', 'rgba').replace(')', ', 0.2)');
-    } else if (primaryColor.startsWith('#')) {
-      bgColor = primaryColor + '33';
+
+    const radarCanvas = document.getElementById('radar-chart');
+    if (radarCanvas) {
+      const ctx = radarCanvas.getContext('2d');
+      if (radarChart) radarChart.destroy();
+      const isDark = body.classList.contains('dark-mode');
+      let primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#6366f1';
+      let bgColor = primaryColor.startsWith('rgb') ? primaryColor.replace('rgb', 'rgba').replace(')', ', 0.2)') : primaryColor + '33';
+
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: { labels: translations[currentLang].chartLabels, datasets: [{ label: animalName, data: detail.stats, fill: true, backgroundColor: bgColor, borderColor: primaryColor, pointBackgroundColor: primaryColor }] },
+        options: { scales: { r: { angleLines: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, grid: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, pointLabels: { color: isDark?'#f1f5f9':'#1e293b' }, suggestedMin: 0, suggestedMax: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+      });
     }
 
-    radarChart = new Chart(ctx, {
-      type: 'radar',
-      data: { 
-        labels: translations[currentLang].chartLabels, 
-        datasets: [{ 
-          label: animalName, 
-          data: detail.stats, 
-          fill: true, 
-          backgroundColor: bgColor,
-          borderColor: primaryColor, 
-          pointBackgroundColor: primaryColor,
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: primaryColor
-        }] 
-      },
-      options: { 
-        scales: { 
-          r: { 
-            angleLines: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, 
-            grid: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, 
-            pointLabels: { 
-              color: isDark?'#f1f5f9':'#1e293b', 
-              font: { size: 12, weight: 'bold', family: "'Noto Sans KR', sans-serif" } 
-            }, 
-            suggestedMin: 0, 
-            suggestedMax: 100, 
-            ticks: { display: false } 
-          } 
-        }, 
-        plugins: { 
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: isDark ? '#334155' : '#fff',
-            titleColor: isDark ? '#f1f5f9' : '#1e293b',
-            bodyColor: isDark ? '#f1f5f9' : '#1e293b',
-            borderColor: primaryColor,
-            borderWidth: 1,
-            displayColors: false
-          }
-        } 
-      }
-    });
     results.forEach(res => {
       const item = document.createElement('div'); item.className = 'result-item';
       item.innerHTML = `<div class="label-group"><span>${animalDetails[res.name]?.name[currentLang] || res.name}</span><span>${res.probability.toFixed(1)}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 0%"></div></div>`;
       resultChart.appendChild(item);
-      setTimeout(() => item.querySelector('.progress-bar-fill').style.width = `${res.probability}%`, 100);
+      setTimeout(() => { const fill = item.querySelector('.progress-bar-fill'); if (fill) fill.style.width = `${res.probability}%`; }, 100);
     });
   }
 
   // --- Upload Handlers ---
   const uploadSection = document.querySelector('.upload-section');
+  if (uploadSection) {
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { uploadSection.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false); });
+    ['dragenter', 'dragover'].forEach(eventName => { uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false); });
+    ['dragleave', 'drop'].forEach(eventName => { uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false); });
+    uploadSection.addEventListener('drop', (e) => { handleFile(e.dataTransfer.files[0]); });
+  }
 
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
-  });
-
-  ['dragenter', 'dragover'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false);
-  });
-
-  ['dragleave', 'drop'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false);
-  });
-
-  uploadSection.addEventListener('drop', (e) => {
-    const file = e.dataTransfer.files[0];
-    handleFile(file);
-  });
-
-  fileUpload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    handleFile(file);
-  });
+  if (fileUpload) { fileUpload.addEventListener('change', (e) => { handleFile(e.target.files[0]); }); }
 
   function handleFile(file) {
     if (file && file.type.startsWith('image/')) {
@@ -673,46 +579,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         placeholder.classList.add('hidden'); 
         webcamVideo.classList.add('hidden');
         if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-        startCameraBtn.classList.remove('hidden');
-        capturePhotoBtn.classList.add('hidden');
+        startCameraBtn.classList.remove('hidden'); capturePhotoBtn.classList.add('hidden');
       };
       reader.readAsDataURL(file);
-    } else if (file) {
-      alert(translations[currentLang].alertImgOnly);
     }
   }
 
-  startCameraBtn.addEventListener('click', async () => {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      webcamVideo.srcObject = stream; webcamVideo.classList.remove('hidden'); imagePreview.classList.add('hidden'); placeholder.classList.add('hidden');
-      startCameraBtn.classList.add('hidden'); capturePhotoBtn.classList.remove('hidden');
-    } catch (err) { alert(translations[currentLang].alertCamera + err.message); }
-  });
+  if (startCameraBtn) {
+    startCameraBtn.addEventListener('click', async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        webcamVideo.srcObject = stream; webcamVideo.classList.remove('hidden'); imagePreview.classList.add('hidden'); placeholder.classList.add('hidden');
+        startCameraBtn.classList.add('hidden'); capturePhotoBtn.classList.remove('hidden');
+      } catch (err) { alert(translations[currentLang].alertCamera + err.message); }
+    });
+  }
 
-  capturePhotoBtn.addEventListener('click', () => {
-    const canvas = document.getElementById('capture-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = webcamVideo.videoWidth; canvas.height = webcamVideo.videoHeight;
-    ctx.drawImage(webcamVideo, 0, 0);
-    imagePreview.onload = () => runAnalysis(imagePreview);
-    imagePreview.src = canvas.toDataURL('image/png');
-    imagePreview.classList.remove('hidden'); webcamVideo.classList.add('hidden');
-    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    capturePhotoBtn.classList.add('hidden'); startCameraBtn.classList.remove('hidden');
-  });
+  if (capturePhotoBtn) {
+    capturePhotoBtn.addEventListener('click', () => {
+      const canvas = document.getElementById('capture-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = webcamVideo.videoWidth; canvas.height = webcamVideo.videoHeight;
+      ctx.drawImage(webcamVideo, 0, 0);
+      imagePreview.onload = () => runAnalysis(imagePreview);
+      imagePreview.src = canvas.toDataURL('image/png');
+      imagePreview.classList.remove('hidden'); webcamVideo.classList.add('hidden');
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+      capturePhotoBtn.classList.add('hidden'); startCameraBtn.classList.remove('hidden');
+    });
+  }
 
-  restartBtn.addEventListener('click', () => {
-    resultSection.classList.add('hidden'); imagePreview.src = ''; imagePreview.classList.add('hidden'); placeholder.classList.remove('hidden');
-  });
+  if (restartBtn) { restartBtn.addEventListener('click', () => { resultSection.classList.add('hidden'); imagePreview.src = ''; imagePreview.classList.add('hidden'); placeholder.classList.remove('hidden'); }); }
+  if (saveBtn) { saveBtn.addEventListener('click', async () => { const canvas = await html2canvas(shareCard, { scale: 2, backgroundColor: body.classList.contains('dark-mode') ? '#1e293b' : '#ffffff', useCORS: true }); const link = document.createElement('a'); link.download = 'result.png'; link.href = canvas.toDataURL(); link.click(); }); }
 
-  saveBtn.addEventListener('click', async () => {
-    const canvas = await html2canvas(shareCard, { scale: 2, backgroundColor: body.classList.contains('dark-mode') ? '#1e293b' : '#ffffff', useCORS: true });
-    const link = document.createElement('a'); link.download = 'animal-face-result.png'; link.href = canvas.toDataURL(); link.click();
-  });
-
-  // --- Init ---
   updateLanguage(currentLang);
-  const currentThemeInit = localStorage.getItem('theme');
-  if (currentThemeInit === 'dark') { body.classList.add('dark-mode'); updateThemeIcon(true); }
+  if (localStorage.getItem('theme') === 'dark') { body.classList.add('dark-mode'); updateThemeIcon(true); }
 });
