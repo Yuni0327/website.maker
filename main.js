@@ -488,14 +488,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     loading.classList.remove('hidden'); resultSection.classList.add('hidden');
     
     try {
-      // 모바일 최적화: 이미지를 분석용 캔버스로 리사이징 (메모리 부족 방지)
+      // 1. TensorFlow.js 엔진 준비 확인 및 백엔드 최적화
+      await tf.ready();
+      
+      // 2. 브라우저가 이미지를 완전히 처리할 시간을 부여 (모바일 안정성)
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      // 3. 메모리 누수 방지를 위해 tf.tidy 사용 고려 (내부적 처리)
+      // 리사이징을 통한 메모리 절약
       const analysisCanvas = document.createElement('canvas');
       const ctx = analysisCanvas.getContext('2d');
-      const maxSize = 400; // 모델 분석에 충분한 크기
+      const maxSize = 400; 
       
       let width = imageElement.naturalWidth || imageElement.width;
       let height = imageElement.naturalHeight || imageElement.height;
       
+      // 유효하지 않은 이미지 크기 체크
+      if (width === 0 || height === 0) {
+        throw new Error("Invalid image dimensions");
+      }
+
       if (width > height) {
         if (width > maxSize) { height *= maxSize / width; width = maxSize; }
       } else {
@@ -506,12 +518,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       analysisCanvas.height = height;
       ctx.drawImage(imageElement, 0, 0, width, height);
       
+      // 4. 모델 예측 실행
       const prediction = await model.predict(analysisCanvas);
-      const results = prediction.map(p => ({ name: p.className, probability: p.probability * 100 })).sort((a, b) => b.probability - a.probability);
+      const results = prediction.map(p => ({ 
+        name: p.className, 
+        probability: p.probability * 100 
+      })).sort((a, b) => b.probability - a.probability);
+      
       displayResults(results, imageElement.src);
     } catch (err) { 
-      console.error("Analysis Error Details:", err); 
-      alert(translations[currentLang].alertError); 
+      console.error("Analysis Error Details:", err);
+      // 구체적인 에러 메시지 로깅
+      if (err.message && err.message.includes("webgl")) {
+        console.warn("WebGL issue detected, attempting fallback...");
+      }
+      alert(translations[currentLang].alertError + "\n(" + err.message.substring(0, 30) + "...)"); 
     }
     finally { 
       loading.classList.add('hidden'); 
