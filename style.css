@@ -883,6 +883,31 @@ footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-si
     gap: 0.3rem;
   }
 
+  .main-nav {
+    position: fixed;
+    bottom: 1.5rem;
+    top: auto; /* 상단 고정 해제 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 280px;
+    margin: 0;
+    border-radius: 3rem;
+    padding: 0.6rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--input-border);
+    background: var(--card-bg);
+    opacity: 0.95;
+  }
+
+  .main-nav ul {
+    gap: 2rem;
+  }
+
+  .main-nav a {
+    font-size: 0.85rem;
+  }
+
   header h1 {
     font-size: 2rem;
     margin-top: 1rem;
