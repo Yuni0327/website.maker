@@ -349,13 +349,9 @@ header p {
   background: var(--card-bg);
   padding: 2rem;
   border-radius: var(--radius);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Stronger shadow */
+  box-shadow: var(--shadow);
   transition: background-color 0.3s, transform 0.2s;
-  border: 2px solid var(--primary-color); /* Highlight border */
-}
-
-.community-section:hover {
-  transform: translateY(-2px);
+  border: 1px solid var(--input-border);
 }
 
 .community-section h2 {
@@ -368,127 +364,125 @@ header p {
   background: var(--desc-bg);
   padding: 1.5rem;
   border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .input-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
-#nickname {
-  flex: 2;
-  padding: 0.75rem;
-  border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
+#nickname, #password, #animal-type-select, #comment-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1.5px solid var(--input-border);
+  border-radius: 0.6rem;
   background-color: var(--input-bg);
   color: var(--text-main);
-  min-width: 0;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  outline: none;
 }
 
-#password {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
-  background-color: var(--input-bg);
-  color: var(--text-main);
-  min-width: 0;
+#nickname:focus, #password:focus, #animal-type-select:focus, #comment-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 #animal-type-select {
-  flex: 2;
-  padding: 0.75rem;
-  border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
-  background-color: var(--input-bg);
-  color: var(--text-main);
+  grid-column: span 2;
   cursor: pointer;
-  min-width: 0;
 }
 
 #comment-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
-  background-color: var(--input-bg);
-  color: var(--text-main);
-  margin-bottom: 0.75rem;
-  resize: vertical;
-  min-height: 80px;
+  min-height: 100px;
+  resize: none;
 }
 
 .comment-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
 
-/* Scrollbar styling */
-.comment-list::-webkit-scrollbar {
-  width: 6px;
-}
-.comment-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-.comment-list::-webkit-scrollbar-thumb {
-  background-color: var(--input-border);
-  border-radius: 3px;
-}
-
 .comment-item {
-  background: var(--desc-bg);
-  padding: 1rem;
-  border-radius: 0.75rem;
+  background: var(--card-bg);
+  padding: 1.2rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--input-border);
   animation: fadeIn 0.3s ease;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
 }
 
 .comment-info {
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.comment-delete-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 1.2rem;
-  padding: 0 0.5rem;
-  line-height: 1;
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-
-.comment-delete-btn:hover {
-  opacity: 1;
-  color: #ef4444; /* Red color for delete */
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .comment-author {
   font-weight: 700;
   color: var(--text-main);
+  font-size: 1rem;
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.comment-delete-btn {
+  background: var(--desc-bg);
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.comment-delete-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+  transform: rotate(90deg);
 }
 
 .comment-text {
   color: var(--text-main);
   word-break: break-all;
   white-space: pre-wrap;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Mobile responsive for input row */
+@media (max-width: 480px) {
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+  #animal-type-select {
+    grid-column: span 1;
+  }
 }
 
 /* Skeleton Loading for comments */
