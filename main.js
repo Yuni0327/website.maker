@@ -231,6 +231,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (radarChart) updateChartTheme(isDarkMode);
   });
 
+  function updateChartTheme(isDark) {
+    if (!radarChart) return;
+    const color = isDark ? '#f1f5f9' : '#1e293b';
+    const gridColor = isDark ? '#475569' : '#e2e8f0';
+    
+    radarChart.options.scales.r.angleLines.color = gridColor;
+    radarChart.options.scales.r.grid.color = gridColor;
+    radarChart.options.scales.r.pointLabels.color = color;
+    radarChart.update();
+  }
+
   function updateLanguage(lang) {
     currentLang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -291,32 +302,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateStackUI() {
     const cards = document.querySelectorAll('.guide-card');
     const dots = document.querySelectorAll('.dot');
+    
     cards.forEach((card) => {
       const index = parseInt(card.dataset.index);
       let relativeIndex = (index - currentGuideIndex + animalKeys.length) % animalKeys.length;
+      
       card.classList.remove('stack-1', 'stack-2', 'stack-3', 'stack-hidden', 'pass-back');
-      if (relativeIndex === 0) card.classList.add('stack-1');
-      else if (relativeIndex === 1) card.classList.add('stack-2');
-      else if (relativeIndex === 2) card.classList.add('stack-3');
-      else card.classList.add('stack-hidden');
+      
+      if (relativeIndex === 0) {
+        card.classList.add('stack-1');
+      } else if (relativeIndex === 1) {
+        card.classList.add('stack-2');
+      } else if (relativeIndex === 2) {
+        card.classList.add('stack-3');
+      } else {
+        card.classList.add('stack-hidden');
+      }
     });
+    
     dots.forEach((dot, i) => dot.classList.toggle('active', i === currentGuideIndex));
   }
 
   function nextGuide() {
     const currentCard = document.querySelector(`.guide-card[data-index="${currentGuideIndex}"]`);
-    if (!currentCard) return;
+    if (!currentCard || currentCard.classList.contains('pass-back')) return;
+    
     currentCard.classList.add('pass-back');
+    
     setTimeout(() => {
       currentGuideIndex = (currentGuideIndex + 1) % animalKeys.length;
       updateStackUI();
-    }, 450);
+    }, 650); // Matches CSS animation duration
   }
 
-  document.getElementById('next-guide')?.addEventListener('click', nextGuide);
-  document.getElementById('prev-guide')?.addEventListener('click', () => {
+  function prevGuide() {
+    // For previous, we just update the index and let updateStackUI handle the positions
     currentGuideIndex = (currentGuideIndex - 1 + animalKeys.length) % animalKeys.length;
     updateStackUI();
+  }
+
+  document.getElementById('next-guide')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    nextGuide();
+  });
+
+  document.getElementById('prev-guide')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    prevGuide();
   });
 
   // --- Community Logic ---
@@ -470,10 +502,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ctx = document.getElementById('radar-chart').getContext('2d');
     if (radarChart) radarChart.destroy();
     const isDark = body.classList.contains('dark-mode');
+    
+    // Get primary color from CSS
+    let primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#6366f1';
+    
+    // Convert RGB to RGBA for chart background if necessary
+    let bgColor = primaryColor;
+    if (primaryColor.startsWith('rgb')) {
+      bgColor = primaryColor.replace('rgb', 'rgba').replace(')', ', 0.2)');
+    } else if (primaryColor.startsWith('#')) {
+      bgColor = primaryColor + '33';
+    }
+
     radarChart = new Chart(ctx, {
       type: 'radar',
-      data: { labels: translations[currentLang].chartLabels, datasets: [{ label: animalName, data: detail.stats, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: '#6366f1', pointBackgroundColor: '#6366f1' }] },
-      options: { scales: { r: { angleLines: { color: isDark?'#475569':'#e2e8f0' }, grid: { color: isDark?'#475569':'#e2e8f0' }, pointLabels: { color: isDark?'#f1f5f9':'#1e293b' }, suggestedMin: 0, suggestedMax: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+      data: { 
+        labels: translations[currentLang].chartLabels, 
+        datasets: [{ 
+          label: animalName, 
+          data: detail.stats, 
+          fill: true, 
+          backgroundColor: bgColor,
+          borderColor: primaryColor, 
+          pointBackgroundColor: primaryColor,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: primaryColor
+        }] 
+      },
+      options: { 
+        scales: { 
+          r: { 
+            angleLines: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, 
+            grid: { color: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)' }, 
+            pointLabels: { 
+              color: isDark?'#f1f5f9':'#1e293b', 
+              font: { size: 12, weight: 'bold', family: "'Noto Sans KR', sans-serif" } 
+            }, 
+            suggestedMin: 0, 
+            suggestedMax: 100, 
+            ticks: { display: false } 
+          } 
+        }, 
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: isDark ? '#334155' : '#fff',
+            titleColor: isDark ? '#f1f5f9' : '#1e293b',
+            bodyColor: isDark ? '#f1f5f9' : '#1e293b',
+            borderColor: primaryColor,
+            borderWidth: 1,
+            displayColors: false
+          }
+        } 
+      }
     });
     results.forEach(res => {
       const item = document.createElement('div'); item.className = 'result-item';
@@ -484,14 +566,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // --- Upload Handlers ---
+  const uploadSection = document.querySelector('.upload-section');
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false);
+  });
+
+  uploadSection.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
+  });
+
   fileUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
+    handleFile(file);
+  });
+
+  function handleFile(file) {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = (ev) => { imagePreview.onload = () => runAnalysis(imagePreview); imagePreview.src = ev.target.result; imagePreview.classList.remove('hidden'); placeholder.classList.add('hidden'); };
+      reader.onload = (ev) => { 
+        imagePreview.onload = () => runAnalysis(imagePreview); 
+        imagePreview.src = ev.target.result; 
+        imagePreview.classList.remove('hidden'); 
+        placeholder.classList.add('hidden'); 
+        webcamVideo.classList.add('hidden');
+        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        startCameraBtn.classList.remove('hidden');
+        capturePhotoBtn.classList.add('hidden');
+      };
       reader.readAsDataURL(file);
+    } else if (file) {
+      alert(translations[currentLang].alertImgOnly);
     }
-  });
+  }
 
   startCameraBtn.addEventListener('click', async () => {
     try {
