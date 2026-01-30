@@ -210,7 +210,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const commentInput = document.getElementById('comment-input');
   const nicknameInput = document.getElementById('nickname');
   const passwordInput = document.getElementById('password');
-  const animalTypeSelect = document.getElementById('animal-type-select');
   const addCommentBtn = document.getElementById('add-comment-btn');
   const commentList = document.getElementById('comment-list');
   const guideStack = document.getElementById('guide-stack');
@@ -550,7 +549,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const clonedImage = document.createElement('img'); clonedImage.src = imageSrc; clonedImage.className = 'result-user-image'; resultImageContainer.appendChild(clonedImage);
     const topResult = results[0];
     const detail = animalDetails[topResult.name] || { name: { ko: topResult.name, en: 'Unknown' }, emoji: '❓', description: { ko: '', en: '' }, celebrities: [], stats: [50,50,50,50,50], comments: { high:{ko:'',en:''}, middle:{ko:'',en:''}, low:{ko:'',en:''} } };
-    if (detail.emoji) animalTypeSelect.value = detail.emoji;
+    
+    // 분석 결과에 따라 커뮤니티 섹션의 동물 칩 자동 선택
+    if (detail.emoji) {
+      const animalTypeHidden = document.getElementById('animal-type-hidden');
+      if (animalTypeHidden) animalTypeHidden.value = detail.emoji;
+      
+      const chips = document.querySelectorAll('.animal-chip');
+      chips.forEach(chip => {
+        if (chip.dataset.value === detail.emoji) chip.classList.add('selected');
+        else chip.classList.remove('selected');
+      });
+    }
+
     const animalName = detail.name[currentLang] || topResult.name;
     shareCard.querySelector('h2').innerHTML = `<div class="top-emoji">${detail.emoji}</div><div>${translations[currentLang].resultComment.replace('{name}', animalName)}</div>`;
     const desc = document.createElement('p'); desc.className = 'animal-description'; desc.textContent = detail.description[currentLang]; resultChart.appendChild(desc);
