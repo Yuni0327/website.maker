@@ -343,7 +343,7 @@ header p {
   justify-content: center;
 }
 
-/* Community Section */
+/* Community Section Improvements */
 .community-section {
   margin-top: 3rem;
   background: var(--card-bg);
@@ -351,6 +351,11 @@ header p {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   border: 1px solid var(--input-border);
+}
+
+.community-section h2 {
+  text-align: center;
+  margin-bottom: 1rem; /* 간격을 살짝 넓힘 */
 }
 
 .community-form {
