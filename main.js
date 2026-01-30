@@ -78,7 +78,8 @@ const translations = {
     alertDeleteConfirm: "정말로 삭제하시겠습니까?",
     alertWrongPassword: "비밀번호가 일치하지 않습니다.",
     alertAlreadyLiked: "이미 공감하셨습니다! ❤️",
-    promptPassword: "비밀번호를 입력하세요:"
+    promptPassword: "비밀번호를 입력하세요:",
+    privacyPolicy: "개인정보 처리방침"
   },
   en: {
     communityTitle: "Animal Farm Chat",
@@ -128,7 +129,8 @@ const translations = {
     alertDeleteConfirm: "Are you sure you want to delete this?",
     alertWrongPassword: "Incorrect password.",
     alertAlreadyLiked: "You already liked this! ❤️",
-    promptPassword: "Enter your password:"
+    promptPassword: "Enter your password:",
+    privacyPolicy: "Privacy Policy"
   }
 };
 

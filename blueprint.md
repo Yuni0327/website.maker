@@ -17,6 +17,8 @@
 - **댓글 삭제 기능:** 글 작성 시 설정한 비밀번호를 통해 본인의 글을 직접 삭제할 수 있습니다. (New)
 - **SNS 공유 최적화(SEO):** Open Graph 메타 태그를 적용하여 카카오톡, 페이스북 등 공유 시 미리보기가 예쁘게 표시됩니다.
 - **반응형 디자인:** 모바일과 데스크톱 모두에서 최적화된 UI를 제공합니다.
+- **수익화(AdSense):** 광고 배치를 위한 공간 확보 및 수익 최적화. (New)
+- **개인정보 처리방침:** 서비스 투명성 확보 및 애드센스 승인을 위한 정책 페이지 추가. (New)
 - **문의하기:** Formspree를 연동하여 제휴 및 피드백 문의를 받을 수 있는 폼을 제공합니다.
 
 ## Technical Stack
@@ -27,6 +29,7 @@
 - **Chart.js (Data Visualization)**
 - **html2canvas (Image Generation)**
 - **Formspree (Email Service)**
+- **Google AdSense (Monetization)**
 
 ## Implementation Plan
 1. **index.html:**
@@ -42,4 +45,7 @@
         - 차트 중복 생성 방지를 위한 인스턴스 관리.
 4. **UI/UX Improvements:**
     - 모바일 환경에서의 헤더 컨트롤(테마/언어 전환) 위치 및 스타일 최적화.
-5. **Verification:** 브라우저 미리보기를 통한 차트 렌더링 및 멘트 표시 확인.
+5. **Monetization & Policy:**
+    - `index.html`에 애드센스 광고 단위 공간(Placeholder) 추가.
+    - 개인정보 처리방침(Privacy Policy) 푸터 영역 추가.
+6. **Verification:** 브라우저 미리보기를 통한 차트 렌더링 및 멘트 표시 확인.
