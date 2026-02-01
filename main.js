@@ -63,6 +63,9 @@ const translations = {
     navGuide: "가이드",
     navCommunity: "수다방",
     celebTitle: "상 연예인",
+    featFree: "100% 무료",
+    featPrivacy: "개인정보 안전",
+    featFast: "빠른 분석",
     guideTitle: "동물상별 상세 가이드",
     guideSubtitle: "나의 동물상에 대해 더 자세히 알아보세요!",
     traitLabel: "대표적인 특징",
@@ -523,12 +526,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) { 
       console.error("Analysis Error:", err);
       alert(translations[currentLang].alertError + "\n(" + err.message.substring(0, 40) + ")"); 
-    }
+    } 
     finally { 
       loading.classList.add('hidden'); 
       resultSection.classList.remove('hidden'); 
       resultSection.scrollIntoView({ behavior: 'smooth' }); 
-    }
+    } 
   };
 
   function displayResults(results, imageSrc) {
