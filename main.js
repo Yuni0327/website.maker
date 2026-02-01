@@ -85,7 +85,19 @@ const translations = {
     alertWrongPassword: "비밀번호가 일치하지 않습니다.",
     alertAlreadyLiked: "이미 공감하셨습니다! ❤️",
     promptPassword: "비밀번호를 입력하세요:",
-    privacyPolicy: "개인정보 처리방침"
+    privacyPolicy: "개인정보 처리방침",
+    infoTitle: "동물상 백과사전",
+    infoSubtitle: "인공지능이 분석하는 다양한 동물상 특징을 읽어보세요.",
+    infoDogTitle: "🐶 강아지상 (Puppy Type)",
+    infoDogDesc: "강아지상은 전체적으로 둥글둥글하고 부드러운 인상을 줍니다. 눈꼬리가 살짝 처져 있어 순하고 다정해 보이며, 보는 사람으로 하여금 편안함을 느끼게 합니다. 대표적인 연예인으로는 송중기, 박보영, 강다니엘 등이 있습니다. 강아지상은 어떤 스타일이든 무난하게 소화하지만, 특히 니트나 파스텔 톤의 의상이 잘 어울립니다.",
+    infoCatTitle: "🐱 고양이상 (Cat Type)",
+    infoCatDesc: "고양이상은 날렵하고 세련된 도시적인 분위기를 풍깁니다. 눈꼬리가 살짝 올라가 있고 콧대가 날카로워 도도하면서도 섹시한 매력이 특징입니다. 제니, 강동원, 한예슬이 대표적인 고양이상 연예인입니다. 시크한 블랙 코디나 화려한 액세서리가 매력을 더욱 돋보이게 합니다.",
+    infoFoxTitle: "🦊 여우상 (Fox Type)",
+    infoFoxDesc: "여우상은 고양이상과 비슷하지만 더 화려하고 홀리는 듯한 매력이 있습니다. 가늘고 긴 눈매와 뾰족한 턱선이 특징이며, 웃을 때 반달눈이 되는 경우가 많습니다. 황민현, 예지, 지코가 이에 해당합니다. 트렌디하고 힙한 패션이 잘 어울리며, 포인트 메이크업으로 눈매를 강조하면 좋습니다.",
+    infoRabbitTitle: "🐰 토끼상 (Rabbit Type)",
+    infoRabbitDesc: "토끼상은 하얗고 깨끗한 피부에 동그란 눈, 그리고 살짝 튀어나온 앞니가 매력 포인트입니다. 전체적으로 상큼하고 발랄한 이미지를 주며 보호 본능을 자극합니다. 나연, 정국, 수지가 대표적입니다. 밝고 화사한 컬러의 의상과 과즙 메이크업이 찰떡같이 어울립니다.",
+    infoDeerTitle: "🦌 사슴상 (Deer Type)",
+    infoDeerDesc: "사슴상은 맑고 깊은 눈망울과 긴 목선이 특징입니다. 우아하고 귀족적인 분위기를 풍기며, 차분하고 신비로운 느낌을 줍니다. 윤아, 차은우, 김진우가 대표적인 사슴상입니다. 깔끔한 셔츠나 단정한 원피스 등 클래식한 스타일링이 본연의 우아함을 극대화해줍니다."
   },
   en: {
     communityTitle: "Animal Farm Chat",
@@ -142,7 +154,19 @@ const translations = {
     alertWrongPassword: "Incorrect password.",
     alertAlreadyLiked: "You already liked this! ❤️",
     promptPassword: "Enter your password:",
-    privacyPolicy: "Privacy Policy"
+    privacyPolicy: "Privacy Policy",
+    infoTitle: "Animal Face Encyclopedia",
+    infoSubtitle: "Read about various animal face traits analyzed by AI.",
+    infoDogTitle: "🐶 Puppy Type",
+    infoDogDesc: "The Puppy type gives a generally rounded and soft impression. With slightly drooping eyes, they look gentle and kind, making others feel comfortable. Representative celebrities include Song Joong-ki, Park Bo-young, and Kang Daniel. They suit any style well, especially soft knits or pastel-toned outfits.",
+    infoCatTitle: "🐱 Cat Type",
+    infoCatDesc: "The Cat type exudes a sharp and sophisticated urban vibe. Characterized by upturned eyes and a sharp nose bridge, they possess a chic yet mysterious charm. Jennie, Kang Dong-won, and Han Ye-seul are representative Cat-type celebrities. Chic black coordinates or glamorous accessories further highlight their charm.",
+    infoFoxTitle: "🦊 Fox Type",
+    infoFoxDesc: "The Fox type is similar to the Cat type but with a more glamorous and captivating appeal. Characterized by long horizontal eyes and a sharp jawline, they often have charming smiling eyes. Hwang Min-hyun, Yeji, and Zico fall into this category. Trendy and hip fashion suits them well, and point makeup to emphasize the eyes is recommended.",
+    infoRabbitTitle: "🐰 Rabbit Type",
+    infoRabbitDesc: "The Rabbit type is characterized by fair, clear skin, round eyes, and slightly prominent front teeth. Overall, they give a fresh and lively image, invoking a protective instinct. Nayeon, Jungkook, and Suzy are representative examples. Bright, vivid colors and 'fruit-juice' makeup suit them perfectly.",
+    infoDeerTitle: "🦌 Deer Type",
+    infoDeerDesc: "The Deer type is characterized by clear, deep eyes and a slender neck. They exude an elegant and aristocratic atmosphere, giving a calm and mysterious feel. Yoona, Cha Eun-woo, and Kim Jin-woo are representative Deer types. Classic styling like neat shirts or elegant dresses maximizes their natural elegance."
   }
 };
 
