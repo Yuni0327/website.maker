@@ -671,16 +671,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Smooth scroll for nav links
   document.querySelectorAll('.main-nav a').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href');
-      const targetElement = document.querySelector(targetId);
-      if (targetElement) {
-        const isMobile = window.innerWidth <= 600;
-        const navHeight = document.querySelector('.main-nav').offsetHeight;
-        const offset = isMobile ? 20 : navHeight + 20; // 모바일은 하단 네비게이션이므로 상단 오프셋 불필요 (여백만 조금)
-        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      const href = this.getAttribute('href');
+      
+      // '#'으로 시작하는 내부 링크인 경우에만 부드러운 스크롤 적용
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        const targetElement = document.querySelector(href);
+        if (targetElement) {
+          const isMobile = window.innerWidth <= 600;
+          const navHeight = document.querySelector('.main-nav').offsetHeight;
+          const offset = isMobile ? 20 : navHeight + 20;
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
       }
+      // 그 외의 링크(예: /blog.html)는 기본 동작(페이지 이동)을 따름
     });
   });
 });
