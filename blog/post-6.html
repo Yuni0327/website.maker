@@ -2,25 +2,28 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>사슴상 vs 토끼상 - Animal Face AI Blog</title>
   <link href="/style.css" rel="stylesheet">
-  <style>.post-content { max-width: 800px; margin: 3rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; }</style>
+  <style>
+    .post-content { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; box-shadow: var(--shadow); }
+    @media (max-width: 600px) { .post-content { padding: 1.2rem; margin: 1rem auto; border-radius: 0.5rem; } h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; } p { font-size: 0.95rem; } }
+  </style>
 </head>
 <body>
   <div class="container">
     <article class="post-content">
+      <a href="/blog.html" style="display: inline-block; margin-bottom: 1rem; color: var(--primary-color); text-decoration: none; font-weight: bold;">← 목록으로</a>
       <h1>사슴상과 토끼상의 차이, 청순함의 두 얼굴</h1>
       <p>청순하고 깨끗한 이미지를 대표하는 두 동물상, 바로 사슴상과 토끼상입니다. 하지만 이 두 가지 청순함에는 미묘하지만 확실한 차이가 존재합니다.</p>
-      
       <h2>1. 사슴상: 우아하고 깊은 청순함</h2>
       <p>사슴상은 맑고 깊은 눈망울과 긴 목선이 포인트입니다. 전체적으로 차분하고 정갈하며, 기품 있는 분위기를 자아냅니다. 고전적인 미인형에 가까우며 우아한 청순함을 상징합니다.</p>
-      
       <h2>2. 토끼상: 상큼하고 발랄한 청순함</h2>
       <p>반면 토끼상은 하얀 피부와 동그란 눈, 그리고 생기 넘치는 표정이 특징입니다. 보는 것만으로도 기분이 좋아지는 과즙미 넘치는 청순함을 가지고 있습니다. 보호 본능을 자극하는 발랄한 에너지가 매력입니다.</p>
-      
       <h2>3. 공통점과 차이점</h2>
       <p>두 동물상 모두 '선한 눈매'를 가졌다는 공통점이 있지만, 사슴상이 좀 더 성숙하고 신비롭다면 토끼상은 좀 더 친근하고 귀여운 느낌이 강합니다. 여러분은 어떤 쪽의 청순함에 더 끌리시나요?</p>
     </article>
   </div>
+  <script>if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark-mode');</script>
 </body>
 </html>

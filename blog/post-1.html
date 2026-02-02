@@ -2,25 +2,28 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>인공지능이 분석하는 동물상 원리 - Animal Face AI Blog</title>
   <link href="/style.css" rel="stylesheet">
-  <style>.post-content { max-width: 800px; margin: 3rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; }</style>
+  <style>
+    .post-content { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; box-shadow: var(--shadow); }
+    @media (max-width: 600px) { .post-content { padding: 1.2rem; margin: 1rem auto; border-radius: 0.5rem; } h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; } p { font-size: 0.95rem; } }
+  </style>
 </head>
 <body>
   <div class="container">
     <article class="post-content">
+      <a href="/blog.html" style="display: inline-block; margin-bottom: 1rem; color: var(--primary-color); text-decoration: none; font-weight: bold;">← 목록으로</a>
       <h1>인공지능이 분석하는 동물상, 그 원리는 무엇일까?</h1>
       <p>오늘날 우리는 스마트폰 클릭 몇 번으로 자신이 어떤 동물과 닮았는지 알 수 있는 시대에 살고 있습니다. 이러한 '동물상 테스트'의 이면에는 고도의 인공지능 기술, 특히 <strong>딥러닝(Deep Learning)</strong>과 <strong>컴퓨터 비전(Computer Vision)</strong> 기술이 자리 잡고 있습니다.</p>
-      
       <h2>1. 데이터 학습의 과정</h2>
       <p>동물상 AI를 만들기 위해서는 수천, 수만 장의 사진 데이터가 필요합니다. 예를 들어, 강아지상으로 분류되는 연예인들의 눈매, 코의 각도, 턱선 등을 AI에게 학습시킵니다. 인공지능은 이 데이터들을 분석하여 '강아지상'만의 공통적인 특징(Feature)을 수치화하여 기억합니다.</p>
-      
       <h2>2. 이미지 인식 기술 (CNN)</h2>
       <p>주로 CNN(Convolutional Neural Network)이라는 신경망 구조가 사용됩니다. 이 기술은 이미지를 아주 작은 조각으로 나누어 분석하며, 처음에는 단순한 선과 곡선을 인식하다가 단계가 올라갈수록 눈, 코, 입과 같은 구체적인 형태를 인식하게 됩니다.</p>
-      
       <h2>3. 결과 도출</h2>
       <p>사용자가 사진을 업로드하면, 학습된 모델은 사용자의 얼굴에서 특징점을 추출하고 기존에 학습된 동물상 데이터와 얼마나 일치하는지 확률을 계산합니다. 그 결과 90% 일치하면 '강아지상'이라는 결과를 내놓게 되는 것입니다.</p>
     </article>
   </div>
+  <script>if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark-mode');</script>
 </body>
 </html>

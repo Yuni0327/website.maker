@@ -2,25 +2,28 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>얼굴 인식 기술의 역사 - Animal Face AI Blog</title>
   <link href="/style.css" rel="stylesheet">
-  <style>.post-content { max-width: 800px; margin: 3rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; }</style>
+  <style>
+    .post-content { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--card-bg); border-radius: var(--radius); line-height: 2; box-shadow: var(--shadow); }
+    @media (max-width: 600px) { .post-content { padding: 1.2rem; margin: 1rem auto; border-radius: 0.5rem; } h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; } p { font-size: 0.95rem; } }
+  </style>
 </head>
 <body>
   <div class="container">
     <article class="post-content">
+      <a href="/blog.html" style="display: inline-block; margin-bottom: 1rem; color: var(--primary-color); text-decoration: none; font-weight: bold;">← 목록으로</a>
       <h1>얼굴 인식 기술의 역사: 엔터테인먼트로의 진화</h1>
       <p>오늘날 우리가 즐기는 동물상 테스트는 사실 수십 년간 발전해 온 얼굴 인식 기술의 결실입니다. 이 기술이 어떻게 발전해 왔는지 간단히 짚어보겠습니다.</p>
-      
       <h2>1. 초기 기술: 보안과 식별</h2>
       <p>1960년대 처음 등장한 얼굴 인식 기술은 매우 단순했습니다. 눈, 코, 입 사이의 거리를 측정하는 수준이었죠. 주된 목적은 보안 시스템이나 범죄자 식별과 같은 군사적, 공공적 목적이었습니다.</p>
-      
       <h2>2. 머신러닝의 도입</h2>
       <p>2000년대 들어 컴퓨터의 연산 능력이 향상되면서 알고리즘이 비약적으로 발전했습니다. 사진 속 인물이 누구인지 정확히 맞히는 수준을 넘어, 성별과 나이까지 추측하기 시작했습니다.</p>
-      
       <h2>3. 스마트폰과 엔터테인먼트</h2>
       <p>현재는 스마트폰 하드웨어의 발전으로 누구나 손안에서 인공지능 기술을 누릴 수 있습니다. 동물상 테스트, 얼굴 보정 필터 등은 복잡한 기술이 대중과 만나 즐거움을 주는 훌륭한 사례가 되었습니다.</p>
     </article>
   </div>
+  <script>if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark-mode');</script>
 </body>
 </html>
