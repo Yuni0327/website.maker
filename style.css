@@ -1005,4 +1005,41 @@ footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-si
   }
 
   .input-row { grid-template-columns: 1fr 1fr; }
+
+  /* Mobile Layout Optimizations */
+  .container {
+    padding: 1rem; /* 상하 여백 축소 */
+  }
+
+  header {
+    margin-bottom: 1.5rem;
+  }
+
+  header h1 {
+    font-size: 1.8rem; /* 타이틀 크기 축소 */
+  }
+
+  /* 카드 내부 여백 축소로 답답함 해소 */
+  .upload-section, 
+  .share-card, 
+  .community-section, 
+  .guide-card, 
+  .contact-section, 
+  .info-card {
+    padding: 1.5rem;
+  }
+
+  /* 기능 배너 컴팩트하게 */
+  .feature-banner {
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-item {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .feature-text {
+    font-size: 0.8rem;
+  }
 }
