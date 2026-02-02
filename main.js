@@ -32,7 +32,7 @@ let stream = null;
 const translations = {
   ko: {
     communityTitle: "동물상 커뮤니티",
-    communityDesc: "결과를 자랑하고 다른 사람들과 이야기해보세요! (익명)",
+    communityDesc: "나와 닮은 동물을 찾으셨나요? 결과를 공유하고 함께 이야기 나눠봐요!",
     postBtn: "글 남기기",
     inputPlaceholder: "나의 동물상은? 자유롭게 이야기를 남겨보세요!",
     nickname: "닉네임",
