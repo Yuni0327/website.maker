@@ -31,7 +31,7 @@ let stream = null;
 // Translation Data
 const translations = {
   ko: {
-    communityTitle: "동물농장 수다방",
+    communityTitle: "동물상 커뮤니티",
     communityDesc: "결과를 자랑하고 다른 사람들과 이야기해보세요! (익명)",
     postBtn: "글 남기기",
     inputPlaceholder: "나의 동물상은? 자유롭게 이야기를 남겨보세요!",
@@ -61,7 +61,7 @@ const translations = {
     chartLabels: ['귀여움', '세련미', '청순함', '화려함', '친근함'],
     navTest: "테스트",
     navGuide: "가이드",
-    navCommunity: "수다방",
+    navCommunity: "커뮤니티",
     celebTitle: "상 연예인",
     featFree: "100% 무료",
     featPrivacy: "개인정보 안전",
@@ -100,8 +100,8 @@ const translations = {
     infoDeerDesc: "사슴상은 맑고 깊은 눈망울과 긴 목선이 특징입니다. 우아하고 귀족적인 분위기를 풍기며, 차분하고 신비로운 느낌을 줍니다. 윤아, 차은우, 김진우가 대표적인 사슴상입니다. 깔끔한 셔츠나 단정한 원피스 등 클래식한 스타일링이 본연의 우아함을 극대화해줍니다."
   },
   en: {
-    communityTitle: "Animal Farm Chat",
-    communityDesc: "Show off your result and chat with others! (Anonymous)",
+    communityTitle: "Animal Face Community",
+    communityDesc: "Share your result and talk with others! (Anonymous)",
     postBtn: "Post",
     inputPlaceholder: "Share your animal type result!",
     nickname: "Nickname",
@@ -130,7 +130,7 @@ const translations = {
     chartLabels: ['Cute', 'Chic', 'Pure', 'Glam', 'Friendly'],
     navTest: "Test",
     navGuide: "Guide",
-    navCommunity: "Chat",
+    navCommunity: "Community",
     celebTitle: " face celebrities",
     featFree: "100% Free",
     featPrivacy: "Privacy Safe",
