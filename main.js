@@ -675,7 +675,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const targetId = this.getAttribute('href');
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
-        const offset = document.querySelector('.main-nav').offsetHeight + 20;
+        const isMobile = window.innerWidth <= 600;
+        const navHeight = document.querySelector('.main-nav').offsetHeight;
+        const offset = isMobile ? 20 : navHeight + 20; // 모바일은 하단 네비게이션이므로 상단 오프셋 불필요 (여백만 조금)
         const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({ top: targetPosition, behavior: 'smooth' });
       }
